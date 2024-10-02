@@ -68,7 +68,7 @@ def main() -> None:
             # Renomear colunas
             publicacoes_mensais.rename(
                 columns={"mes_ano": "Mês/Ano", "quantidade": "Quantidade"},
-                inplace=True,  # noqa: PD002
+                inplace=True,
             )
 
             # Criar gráfico de barras com Plotly Express
@@ -84,8 +84,10 @@ def main() -> None:
                 height=400,
             )
             # Visualizacao no streamlit
-            (aba1) = st.tabs([
+            aba1, _aba2, _aba3 = st.tabs([
                 "Receita",
+                "Quantidade de vendas",
+                "Vendedores",
             ])
             col1, col2 = st.columns(2)
 
