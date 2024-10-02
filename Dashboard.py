@@ -84,10 +84,8 @@ def main() -> None:
                 height=400,
             )
             # Visualizacao no streamlit
-            (aba1,) = st.tabs([
+            (aba1) = st.tabs([
                 "Receita",
-                "Quantidade de vendas",
-                "Vendedores",
             ])
             col1, col2 = st.columns(2)
 
