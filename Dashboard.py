@@ -85,7 +85,7 @@ def main() -> None:
             )
             # Visualizacao no streamlit
             aba1, _aba2, _aba3 = st.tabs([
-                "Receita",
+                "MP",
                 "Quantidade de vendas",
                 "Vendedores",
             ])
