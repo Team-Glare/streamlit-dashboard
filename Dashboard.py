@@ -6,13 +6,6 @@ import dotenv
 import pandas as pd
 import plotly.express as px  # type: ignore  # noqa: PGH003
 import pymysql
-
-import os
-
-import dotenv
-import pandas as pd
-import plotly.express as px  # type: ignore  # noqa: PGH003
-import pymysql
 import streamlit as st
 
 st.set_page_config(layout="wide")
