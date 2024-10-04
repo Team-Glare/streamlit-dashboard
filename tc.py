@@ -83,22 +83,16 @@ def main() -> None:
                 },
                 height=400,
             )
-            # Visualizacao no streamlit
-            aba1 = st.tabs([
-                "TC",
-            ])
+
             col1, col2 = st.columns(2)
+            with col1:
+                # Exibir o gráfico no Streamlit
+                st.plotly_chart(fig)
 
-            with aba1:
-                col1, col2 = st.columns(2)
-                with col1:
-                    # Exibir o gráfico no Streamlit
-                    st.plotly_chart(fig)
-
-                with col2:
-                    # Exibir o resumo das publicações mensais
-                    st.subheader("Publicações Mensais Resumidas")
-                    st.table(publicacoes_mensais)
+            with col2:
+                # Exibir o resumo das publicações mensais
+                st.subheader("Publicações Mensais Resumidas")
+                st.table(publicacoes_mensais)
 
     except pymysql.MySQLError as e:
         st.error(f"Erro na conexão com o banco de dados: {e}")
