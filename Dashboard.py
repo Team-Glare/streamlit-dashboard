@@ -6,7 +6,6 @@ import dotenv
 import pandas as pd
 import plotly.express as px  # type: ignore  # noqa: PGH003
 import pymysql
-import streamlit as st"""Dashboard do projeto."""
 
 import os
 
