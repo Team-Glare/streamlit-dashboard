@@ -22,7 +22,7 @@ database = os.getenv("DB_DATABASE")
 def main() -> None:
     """Start the Streamlit app."""
     try:
-        if not host or not database:
+        if not host or not user or not database:
             st.error("Faltam informações de conexão com o banco de dados.")
             return
 
@@ -64,23 +64,17 @@ def main() -> None:
 
             # Contar o número de publicações por mês
             publicacoes_mensais = (
-                dados.groupby("mes_ano").size().reset_index(name="quantidade")
-            )
-
-            # Renomear colunas
-            publicacoes_mensais.rename(
-                columns={"mes_ano": "Mês/Ano", "quantidade": "Quantidade"},
-                inplace=True,
+                dados.groupby("mes_ano").size().reset_index(name="Quantidade")
             )
 
             # Criar gráfico de barras com Plotly Express
             fig = px.bar(
                 publicacoes_mensais,
-                x="Mês/Ano",
+                x="mes_ano",
                 y="Quantidade",
                 title="Publicações Mensais",
                 labels={
-                    "Mês/Ano": "Mês/Ano",
+                    "mes_ano": "Mês/Ano",
                     "Quantidade": "Quantidade de Publicações",
                 },
                 height=400,
@@ -96,7 +90,7 @@ def main() -> None:
                 st.subheader("Publicações Mensais Resumidas")
                 st.table(publicacoes_mensais)
 
-        # Exibir tabela com nome do procurador (coluna `name`), mês/ano e quantidade
+        # Exibir tabela com nome do procurador (coluna `name`) e mês/ano
         st.table(dados[['name', 'mes_ano']])
 
     except pymysql.MySQLError as e:
