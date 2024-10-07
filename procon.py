@@ -1,10 +1,7 @@
-"""Dashboard do projeto."""
-
 import os
-
 import dotenv
 import pandas as pd
-import plotly.express as px  # type: ignore  # noqa: PGH003
+import plotly.express as px
 import pymysql
 import streamlit as st
 
@@ -25,7 +22,7 @@ database = os.getenv("DB_DATABASE")
 def main() -> None:
     """Start the Streamlit app."""
     try:
-        if not host or not user or not database:
+        if not host or not database:
             st.error("Faltam informações de conexão com o banco de dados.")
             return
 
@@ -38,9 +35,14 @@ def main() -> None:
         )
         cursor = conn.cursor()
 
-        # Executar a consulta SQL
+        # Executar a consulta SQL com JOIN para obter o nome do procurador (coluna `name`)
         cursor.execute(
-            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PROCON'",
+            """
+            SELECT a.*, u.name 
+            FROM ANDAMENTOS a
+            JOIN users u ON a.user_id = u.id
+            WHERE a.nome_procuradoria = 'PROCON'
+            """
         )
         resultados = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
@@ -61,7 +63,7 @@ def main() -> None:
             dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
 
             # Contar o número de publicações por mês
-            publicacoes_mensais = (  # type: ignore  # noqa: PGH003
+            publicacoes_mensais = (
                 dados.groupby("mes_ano").size().reset_index(name="quantidade")
             )
 
@@ -93,6 +95,9 @@ def main() -> None:
                 # Exibir o resumo das publicações mensais
                 st.subheader("Publicações Mensais Resumidas")
                 st.table(publicacoes_mensais)
+
+        # Exibir tabela com nome do procurador (coluna `name`), mês/ano e quantidade
+        st.table(dados[['name', 'mes_ano']])
 
     except pymysql.MySQLError as e:
         st.error(f"Erro na conexão com o banco de dados: {e}")
