@@ -1,14 +1,17 @@
+"""Dashboard do projeto."""
+
 import os
+
 import dotenv
 import pandas as pd
-import plotly.express as px
+import plotly.express as px  # type: ignore  # noqa: PGH003
 import pymysql
 import streamlit as st
 
 st.set_page_config(layout="wide")
 
 # Título da página
-st.title("Estatística - PROCON :bar_chart:")
+st.title("Estatística - Secretaria Adjunta - André Salles :bar_chart:")
 
 dotenv.load_dotenv()
 
@@ -35,14 +38,9 @@ def main() -> None:
         )
         cursor = conn.cursor()
 
-        # Executar a consulta SQL com JOIN para obter o nome do procurador
+        # Executar a consulta SQL
         cursor.execute(
-            """
-            SELECT a.*, u.name AS nome_procurador 
-            FROM ANDAMENTOS a
-            JOIN users u ON a.user_id = u.id
-            WHERE a.nome_procuradoria = 'PROCON'
-            """
+            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='S. ADJUNTO'",
         )
         resultados = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
@@ -63,7 +61,9 @@ def main() -> None:
             dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
 
             # Contar o número de publicações por mês
-            publicacoes_mensais = dados.groupby("mes_ano").size().reset_index(name="quantidade")
+            publicacoes_mensais = (  # type: ignore  # noqa: PGH003
+                dados.groupby("mes_ano").size().reset_index(name="quantidade")
+            )
 
             # Renomear colunas
             publicacoes_mensais.rename(
@@ -90,9 +90,9 @@ def main() -> None:
                 st.plotly_chart(fig)
 
             with col2:
-                # Exibir o resumo das publicações mensais incluindo o nome do procurador
+                # Exibir o resumo das publicações mensais
                 st.subheader("Publicações Mensais Resumidas")
-                st.table(dados[['nome_procurador', 'mes_ano', 'quantidade']])
+                st.table(publicacoes_mensais)
 
     except pymysql.MySQLError as e:
         st.error(f"Erro na conexão com o banco de dados: {e}")

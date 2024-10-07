@@ -1,14 +1,17 @@
+"""Dashboard do projeto."""
+
 import os
+
 import dotenv
 import pandas as pd
-import plotly.express as px
+import plotly.express as px  # type: ignore  # noqa: PGH003
 import pymysql
 import streamlit as st
 
 st.set_page_config(layout="wide")
 
 # Título da página
-st.title("Estatística - PROCON :bar_chart:")
+st.title("Estatística - Secretaria Adjunta - André Salles :bar_chart:")
 
 dotenv.load_dotenv()
 
@@ -35,14 +38,9 @@ def main() -> None:
         )
         cursor = conn.cursor()
 
-        # Executar a consulta SQL com JOIN para obter o nome do procurador (coluna `name`)
+        # Executar a consulta SQL
         cursor.execute(
-            """
-            SELECT a.*, u.name 
-            FROM ANDAMENTOS a
-            JOIN users u ON a.user_id = u.id
-            WHERE a.nome_procuradoria = 'PROCON'
-            """
+            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='S. ADJUNTO'",
         )
         resultados = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
@@ -63,18 +61,24 @@ def main() -> None:
             dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
 
             # Contar o número de publicações por mês
-            publicacoes_mensais = (
-                dados.groupby("mes_ano").size().reset_index(name="Quantidade")
+            publicacoes_mensais = (  # type: ignore  # noqa: PGH003
+                dados.groupby("mes_ano").size().reset_index(name="quantidade")
+            )
+
+            # Renomear colunas
+            publicacoes_mensais.rename(
+                columns={"mes_ano": "Mês/Ano", "quantidade": "Quantidade"},
+                inplace=True,
             )
 
             # Criar gráfico de barras com Plotly Express
             fig = px.bar(
                 publicacoes_mensais,
-                x="mes_ano",
+                x="Mês/Ano",
                 y="Quantidade",
                 title="Publicações Mensais",
                 labels={
-                    "mes_ano": "Mês/Ano",
+                    "Mês/Ano": "Mês/Ano",
                     "Quantidade": "Quantidade de Publicações",
                 },
                 height=400,
@@ -89,9 +93,6 @@ def main() -> None:
                 # Exibir o resumo das publicações mensais
                 st.subheader("Publicações Mensais Resumidas")
                 st.table(publicacoes_mensais)
-
-        # Exibir tabela com nome do procurador (coluna `name`) e mês/ano
-        st.table(dados[['name', 'mes_ano']])
 
     except pymysql.MySQLError as e:
         st.error(f"Erro na conexão com o banco de dados: {e}")
