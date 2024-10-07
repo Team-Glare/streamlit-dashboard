@@ -1,10 +1,7 @@
-"""Dashboard do projeto."""
-
 import os
-
 import dotenv
 import pandas as pd
-import plotly.express as px  # type: ignore  # noqa: PGH003
+import plotly.express as px
 import pymysql
 import streamlit as st
 
@@ -38,9 +35,14 @@ def main() -> None:
         )
         cursor = conn.cursor()
 
-        # Executar a consulta SQL
+        # Executar a consulta SQL com JOIN para obter o nome do procurador
         cursor.execute(
-            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PROCON'",
+            """
+            SELECT a.*, u.name AS nome_procurador 
+            FROM ANDAMENTOS a
+            JOIN users u ON a.user_id = u.id
+            WHERE a.nome_procuradoria = 'PROCON'
+            """
         )
         resultados = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
@@ -61,9 +63,7 @@ def main() -> None:
             dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
 
             # Contar o número de publicações por mês
-            publicacoes_mensais = (  # type: ignore  # noqa: PGH003
-                dados.groupby("mes_ano").size().reset_index(name="quantidade")
-            )
+            publicacoes_mensais = dados.groupby("mes_ano").size().reset_index(name="quantidade")
 
             # Renomear colunas
             publicacoes_mensais.rename(
@@ -90,9 +90,9 @@ def main() -> None:
                 st.plotly_chart(fig)
 
             with col2:
-                # Exibir o resumo das publicações mensais
+                # Exibir o resumo das publicações mensais incluindo o nome do procurador
                 st.subheader("Publicações Mensais Resumidas")
-                st.table(publicacoes_mensais)
+                st.table(dados[['nome_procurador', 'mes_ano', 'quantidade']])
 
     except pymysql.MySQLError as e:
         st.error(f"Erro na conexão com o banco de dados: {e}")
