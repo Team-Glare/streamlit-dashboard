@@ -40,7 +40,7 @@ def main() -> None:
 
         # Executar a consulta SQL
         cursor.execute(
-            "SELECT * FROM NOTIF_VIEW WHERE procuradoria_id='2'",
+            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PTB'",
         )
         resultados = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
