@@ -11,7 +11,7 @@ import streamlit as st
 st.set_page_config(layout="wide")
 
 # Título da página
-st.title("Estatísticas da Procuradoria Trabalhista - PTB :bar_chart:")
+st.title("Estatística - Tribunal de Contas - TC - 2024 :bar_chart:")
 
 dotenv.load_dotenv()
 
@@ -40,7 +40,7 @@ def main() -> None:
 
         # Executar a consulta SQL
         cursor.execute(
-            "SELECT * FROM notificacoes WHERE procuradoria_id='2'",
+            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='TC'",
         )
         resultados = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
