@@ -57,7 +57,7 @@ def main() -> None:
         
         # Criar um DataFrame a partir dos resultados e nomes de colunas
         intimacoes_dados = pd.DataFrame(intimacoes, columns=colunas)
-        intimacoes_dados = intimacoes_dados[citacoes_dados['name'] in names]
+        intimacoes_dados = intimacoes_dados[intimacoes_dados['name'] in names]
 
         cursor = conn.cursor()
         # Executar a consulta SQL
@@ -69,7 +69,7 @@ def main() -> None:
 
         # Criar um DataFrame a partir dos resultados e nomes de colunas
         citacoes_dados = pd.DataFrame(citacoes, columns=colunas)
-        citacoes_dados = citacoes_dados['name' in names]
+        citacoes_dados = citacoes_dados[citacoes_dados['name'] in names]
 
         # Fechar a conexão com o banco de dados
         conn.close()
