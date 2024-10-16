@@ -51,9 +51,6 @@ def main() -> None:
         # Criar um DataFrame a partir dos resultados e nomes de colunas
         intimacoes_dados = pd.DataFrame(intimacoes, columns=colunas)
 
-        # Fechar a conexão com o banco de dados
-        conn.close()
-        
         cursor = conn.cursor()
         # Executar a consulta SQL
         cursor.execute(
