@@ -43,6 +43,8 @@ def main() -> None:
             'Leonardo Tokuda Pereira',
             'Leonardo Warmling Candido da Silva',
             'Marcelo Moura da Silva',
+            'Pedro Carvalho Mitre Chaves',
+            'Kelly Cristina Majima'
         ]
         
         
