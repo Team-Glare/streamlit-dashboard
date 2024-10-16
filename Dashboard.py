@@ -39,7 +39,10 @@ def main() -> None:
         
         names = [
             'Natália Franco Massuia e Marcondes',
-            'Anamaria Barbosa Ebram Fernandes'
+            'Anamaria Barbosa Ebram Fernandes',
+            'Leonardo Tokuda Pereira',
+            'Leonardo Warmling Candido da Silva',
+            'Marcelo Moura da Silva',
         ]
         
         
