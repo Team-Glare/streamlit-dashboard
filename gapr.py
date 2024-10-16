@@ -11,7 +11,7 @@ import streamlit as st
 st.set_page_config(layout="wide")
 
 # Título da página
-st.title("Estatística - Ministério Público - GAPR - 2024 :bar_chart:")
+st.title("Estatística - grupo apoio processos relevantes - GAPR - 2024 :bar_chart:")
 
 dotenv.load_dotenv()
 
