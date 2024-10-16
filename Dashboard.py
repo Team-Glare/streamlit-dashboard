@@ -37,17 +37,13 @@ def main() -> None:
             database=database,
         )
         
+        names = [
+            'Natália Franco Massuia e Marcondes',
+            'Anamaria Barbosa Ebram Fernandes'
+        ]
+        
         
         tabs = st.tabs([ "Citações", "Intimações"])
-        
-        cursor = conn.cursor()
-        # Executar a consulta SQL
-        cursor.execute(
-            "SELECT * FROM users",
-        )
-        users = cursor.fetchall()
-        colunas = [desc[0] for desc in cursor.description]
-        users = pd.DataFrame(users, columns=colunas)
         
         cursor = conn.cursor()
         # Executar a consulta SQL
@@ -61,7 +57,7 @@ def main() -> None:
         
         # Criar um DataFrame a partir dos resultados e nomes de colunas
         intimacoes_dados = pd.DataFrame(intimacoes, columns=colunas)
-        intimacoes_dados = intimacoes_dados['name' in users['procuradoria' == 'PTB']]
+        intimacoes_dados = intimacoes_dados['name' in names]
 
         cursor = conn.cursor()
         # Executar a consulta SQL
@@ -73,7 +69,7 @@ def main() -> None:
 
         # Criar um DataFrame a partir dos resultados e nomes de colunas
         citacoes_dados = pd.DataFrame(citacoes, columns=colunas)
-        citacoes_dados = citacoes_dados['name' in users['procuradoria' == 'PTB']]
+        citacoes_dados = citacoes_dados['name' in names]
 
         # Fechar a conexão com o banco de dados
         conn.close()
