@@ -38,8 +38,8 @@ def main() -> None:
         )
         
         names = [
-            {'name': 'Natália Franco Massuia e Marcondes'},
-            {'name': 'Anamaria Barbosa Ebram Fernandes'}
+            'Natália Franco Massuia e Marcondes',
+            'Anamaria Barbosa Ebram Fernandes'
         ]
         
         
@@ -58,7 +58,6 @@ def main() -> None:
         # Criar um DataFrame a partir dos resultados e nomes de colunas
         intimacoes_dados = pd.DataFrame(intimacoes, columns=colunas)
         intimacoes_dados = intimacoes_dados[intimacoes_dados['name'].isin(names)]
-        print(intimacoes_dados.shape)
 
         cursor = conn.cursor()
         # Executar a consulta SQL
@@ -117,7 +116,7 @@ def main() -> None:
                 col1, col2 = st.columns(2)
                 with col1:
                     # Exibir o gráfico no Streamlit
-                    st.plotly_chart(fig, key='citacoes')
+                    st.plotly_chart(fig)
 
                 with col2:
                     # Exibir o resumo das publicações mensais
@@ -167,7 +166,7 @@ def main() -> None:
                 col1, col2 = st.columns(2)
                 with col1:
                     # Exibir o gráfico no Streamlit
-                    st.plotly_chart(fig, key='intimacoes')
+                    st.plotly_chart(fig)
 
                 with col2:
                     # Exibir o resumo das publicações mensais
