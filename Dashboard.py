@@ -40,7 +40,7 @@ def main() -> None:
 
         # Executar a consulta SQL
         cursor.execute(
-            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PTB' AND natureza LIKE 'cit%'",
+            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PTB' AND natureza LIKE 'cit%' COLLATE utf8mb4_unicode_ci",
         )
         resultados = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
