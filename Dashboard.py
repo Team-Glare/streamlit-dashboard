@@ -40,21 +40,36 @@ def main() -> None:
         
         tabs = st.tabs(["Intimações", "Citações"])
         
+        cursor = conn.cursor()
+        # Executar a consulta SQL
+        cursor.execute(
+            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PTB' AND natureza LIKE 'int%' COLLATE utf8mb4_unicode_ci",
+        )
+        intimacoes = cursor.fetchall()
+        colunas = [desc[0] for desc in cursor.description]
+        
+        # Criar um DataFrame a partir dos resultados e nomes de colunas
+        intimacoes_dados = pd.DataFrame(intimacoes, columns=colunas)
+
+        # Fechar a conexão com o banco de dados
+        conn.close()
+        
+        cursor = conn.cursor()
+        # Executar a consulta SQL
+        cursor.execute(
+            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PTB' AND natureza LIKE 'cit%' COLLATE utf8mb4_unicode_ci",
+        )
+        citacoes = cursor.fetchall()
+        colunas = [desc[0] for desc in cursor.description]
+
+        # Criar um DataFrame a partir dos resultados e nomes de colunas
+        citacoes_dados = pd.DataFrame(citacoes, columns=colunas)
+
+        # Fechar a conexão com o banco de dados
+        conn.close()
+        
         with tabs[0]:
-            cursor = conn.cursor()
-            # Executar a consulta SQL
-            cursor.execute(
-                "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PTB' AND natureza LIKE 'cit%' COLLATE utf8mb4_unicode_ci",
-            )
-            resultados = cursor.fetchall()
-            colunas = [desc[0] for desc in cursor.description]
-
-            # Criar um DataFrame a partir dos resultados e nomes de colunas
-            dados = pd.DataFrame(resultados, columns=colunas)
-
-            # Fechar a conexão com o banco de dados
-            conn.close()
-
+            dados = citacoes_dados
             # Calcular o total de publicações
             total_publicacoes = len(dados)
             st.metric(label="Quantidade Total", value=total_publicacoes)
@@ -103,19 +118,7 @@ def main() -> None:
                     st.table(publicacoes_mensais)
 
         with tabs[1]:
-            cursor = conn.cursor()
-            # Executar a consulta SQL
-            cursor.execute(
-                "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PTB' AND natureza LIKE 'int%' COLLATE utf8mb4_unicode_ci",
-            )
-            resultados = cursor.fetchall()
-            colunas = [desc[0] for desc in cursor.description]
-
-            # Criar um DataFrame a partir dos resultados e nomes de colunas
-            dados = pd.DataFrame(resultados, columns=colunas)
-
-            # Fechar a conexão com o banco de dados
-            conn.close()
+            dados = intimacoes_dados
 
             # Calcular o total de publicações
             total_publicacoes = len(dados)
