@@ -116,7 +116,7 @@ def main() -> None:
                 col1, col2 = st.columns(2)
                 with col1:
                     # Exibir o gráfico no Streamlit
-                    st.plotly_chart(fig)
+                    st.plotly_chart(fig, key='citacoes')
 
                 with col2:
                     # Exibir o resumo das publicações mensais
@@ -166,7 +166,7 @@ def main() -> None:
                 col1, col2 = st.columns(2)
                 with col1:
                     # Exibir o gráfico no Streamlit
-                    st.plotly_chart(fig)
+                    st.plotly_chart(fig, key='intimacoes')
 
                 with col2:
                     # Exibir o resumo das publicações mensais
