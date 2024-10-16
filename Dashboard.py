@@ -36,11 +36,12 @@ def main() -> None:
             password=password,
             database=database,
         )
-        cursor = conn.cursor()
+        
         
         tabs = st.tabs(["Intimações", "Citações"])
         
         with tabs[0]:
+            cursor = conn.cursor()
             # Executar a consulta SQL
             cursor.execute(
                 "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PTB' AND natureza LIKE 'cit%' COLLATE utf8mb4_unicode_ci",
@@ -102,6 +103,7 @@ def main() -> None:
                     st.table(publicacoes_mensais)
 
         with tabs[1]:
+            cursor = conn.cursor()
             # Executar a consulta SQL
             cursor.execute(
                 "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PTB' AND natureza LIKE 'int%' COLLATE utf8mb4_unicode_ci",
