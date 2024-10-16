@@ -11,7 +11,7 @@ import streamlit as st
 st.set_page_config(layout="wide")
 
 # Título da página
-st.title("Estatística da procuradoria de Patrimonio Urbanístico e imobiliário - PPUI - 2024 :bar_chart:")
+st.title("Estatística da procuradoria Fiscal e Tributária - PFT - 2024 :bar_chart:")
 
 dotenv.load_dotenv()
 
@@ -40,7 +40,7 @@ def main() -> None:
 
         # Executar a consulta SQL
         cursor.execute(
-            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PPUI'",
+            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PFT'",
         )
         resultados = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
