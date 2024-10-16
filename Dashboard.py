@@ -1,7 +1,6 @@
 """Dashboard do projeto."""
 
 import os
-
 import dotenv
 import pandas as pd
 import plotly.express as px  # type: ignore  # noqa: PGH003
@@ -40,7 +39,14 @@ def main() -> None:
 
         # Executar a consulta SQL
         cursor.execute(
-            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PROCON'",
+            """
+            SELECT a.usuario_inclusao, u.nome, COUNT(*) as quantidade 
+            FROM ANDAMENTOS a 
+            JOIN users u ON a.usuario_inclusao = u.id 
+            WHERE a.nome_procuradoria='PROCON' 
+            AND a.usuario_inclusao IN (13, 35) 
+            GROUP BY a.usuario_inclusao, u.nome
+            """
         )
         resultados = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
@@ -51,9 +57,10 @@ def main() -> None:
         # Fechar a conexão com o banco de dados
         conn.close()
 
-        # Calcular o total de publicações
-        total_publicacoes = len(dados)
-        st.metric(label="Quantidade Total", value=total_publicacoes)
+        # Exibir o quantitativo por usuário
+        st.subheader("Quantidade de Publicações por Usuário (IDs 13 e 35)")
+        st.table(dados)
+
 
         # Verifica se há uma coluna 'datapub' no formato adequado
         if "datapub" in dados.columns:
@@ -71,18 +78,20 @@ def main() -> None:
                 inplace=True,
             )
 
+             # Mapeamento de cores para os IDs
+            color_map = {13: "pink", 35: "green"}
+
             # Criar gráfico de barras com Plotly Express
             fig = px.bar(
-                publicacoes_mensais,
-                x="Mês/Ano",
-                y="Quantidade",
-                title="Publicações Mensais",
-                labels={
-                    "Mês/Ano": "Mês/Ano",
-                    "Quantidade": "Quantidade de Publicações",
-                },
-                height=400,
-            )
+            dados,
+            x="nome",  # Agora usamos o nome dos usuários
+            y="quantidade",
+            title="Quantidade de Publicações por Usuário (IDs 13 e 35)",
+            labels={"nome": "Usuário", "quantidade": "Quantidade"},
+            height=400,
+            color="usuario_inclusao",  # Define a cor com base no ID do usuário
+            color_discrete_map=color_map,  # Mapeia as cores específicas para os IDs
+        )
 
             col1, col2 = st.columns(2)
             with col1:
