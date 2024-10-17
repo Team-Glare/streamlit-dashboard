@@ -48,7 +48,7 @@ def main() -> None:
         ]
         
         
-        tabs = st.tabs([ "Citações", "Intimações"])
+        tabs = st.tabs(["Citações", "Intimações"])
         
         cursor = conn.cursor()
         # Executar a consulta SQL para citações
@@ -111,9 +111,6 @@ def main() -> None:
                     hole=0.4,  # Isso cria o efeito de "rosca"
                 )
 
-                # Exibir o gráfico de pizza
-                st.plotly_chart(fig_pizza, height=500)
-
                 # Criar gráfico de barras com Plotly Express
                 fig_bar = px.bar(
                     publicacoes_mensais,
@@ -129,8 +126,13 @@ def main() -> None:
                     height=400,
                 )
 
-                # Exibir o gráfico de barras
-                st.plotly_chart(fig_bar)
+                # Exibir os gráficos lado a lado
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.plotly_chart(fig_pizza, height=500)
+                
+                with col2:
+                    st.plotly_chart(fig_bar)
 
                 # Exibir o resumo das publicações mensais
                 st.subheader("Publicações Mensais Resumidas")
@@ -171,9 +173,6 @@ def main() -> None:
                     hole=0.4,  # Isso cria o efeito de "rosca"
                 )
 
-                # Exibir o gráfico de pizza
-                st.plotly_chart(fig_pizza, height=500)
-
                 # Criar gráfico de barras com Plotly Express
                 fig_bar = px.bar(
                     publicacoes_mensais,
@@ -189,8 +188,13 @@ def main() -> None:
                     height=400,
                 )
 
-                # Exibir o gráfico de barras
-                st.plotly_chart(fig_bar)
+                # Exibir os gráficos lado a lado
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.plotly_chart(fig_pizza, height=500)
+                
+                with col2:
+                    st.plotly_chart(fig_bar)
 
                 # Exibir o resumo das publicações mensais
                 st.subheader("Publicações Mensais Resumidas")
