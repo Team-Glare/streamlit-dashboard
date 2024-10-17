@@ -48,7 +48,7 @@ def main() -> None:
         ]
         
         
-        tabs = st.tabs([ "Citações", "Intimações"])
+        tabs = st.tabs([ "Citações", "Intimações", "Gráfico de Pizza"])
         
         cursor = conn.cursor()
         # Executar a consulta SQL
@@ -57,7 +57,6 @@ def main() -> None:
         )
         intimacoes = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
-        
         
         
         # Criar um DataFrame a partir dos resultados e nomes de colunas
@@ -91,7 +90,7 @@ def main() -> None:
                 dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
 
                 # Contar o número de publicações por mês
-                publicacoes_mensais = (  # type: ignore  # noqa: PGH003
+                publicacoes_mensais = (
                     dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
                 )
 
@@ -104,21 +103,17 @@ def main() -> None:
                 # Criar gráfico de barras com Plotly Express
                 fig = px.bar(
                     publicacoes_mensais,
-                     x="Mês/Ano",
-                     y="Quantidade",
-                     color="Nome",  # Adicionar a cor para diferenciar os usuários
-                     title="Publicações Mensais",
-                     labels={
-                      "Mês/Ano": "Mês/Ano",
-                      "Quantidade": "Quantidade de Publicações",
-                      "Nome": "Nome do Usuário",
-                 },
-                height=400,
+                    x="Mês/Ano",
+                    y="Quantidade",
+                    color="Nome",  # Adicionar a cor para diferenciar os usuários
+                    title="Publicações Mensais",
+                    labels={
+                        "Mês/Ano": "Mês/Ano",
+                        "Quantidade": "Quantidade de Publicações",
+                        "Nome": "Nome do Usuário",
+                    },
+                    height=400,
                 )
-                
-                
-
-                
 
                 col1, col2 = st.columns(2)
                 with col1:
@@ -143,7 +138,7 @@ def main() -> None:
                 dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
 
                 # Contar o número de publicações por mês
-                publicacoes_mensais = (  # type: ignore  # noqa: PGH003
+                publicacoes_mensais = (
                     dados.groupby("mes_ano").size().reset_index(name="quantidade")
                 )
 
@@ -165,10 +160,6 @@ def main() -> None:
                     },
                     height=400,
                 )
-                
-                
-
-                
 
                 col1, col2 = st.columns(2)
                 with col1:
@@ -179,6 +170,26 @@ def main() -> None:
                     # Exibir o resumo das publicações mensais
                     st.subheader("Publicações Mensais Resumidas")
                     st.table(publicacoes_mensais)
+        
+        with tabs[2]:
+            dados = citacoes_dados  # Ou intimacoes_dados, dependendo do que você preferir
+
+            # Verifica se há uma coluna 'name' para agrupar os dados
+            if "name" in dados.columns:
+                publicacoes_por_usuario = dados['name'].value_counts().reset_index()
+                publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
+
+                # Criar gráfico de pizza com Plotly Express
+                fig_pizza = px.pie(
+                    publicacoes_por_usuario,
+                    names='Nome',
+                    values='Quantidade',
+                    title="Distribuição de Publicações por Usuário",
+                    hole=0.4,  # Isso cria o efeito de "rosca"
+                )
+
+                # Exibir o gráfico no Streamlit
+                st.plotly_chart(fig_pizza, height=500)
 
 
     except pymysql.MySQLError as e:
