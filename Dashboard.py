@@ -1,12 +1,15 @@
 """Dashboard do projeto."""
 
 import os
-
+import random
 import dotenv
 import pandas as pd
 import plotly.express as px  # type: ignore  # noqa: PGH003
 import pymysql
 import streamlit as st
+from pyecharts.charts import Bar
+from pyecharts import options as opts
+from streamlit_echarts import st_pyecharts  # Importando o st_pyecharts para o novo gráfico
 
 st.set_page_config(layout="wide")
 
@@ -46,7 +49,6 @@ def main() -> None:
             'Pedro Carvalho Mitre Chaves',
             'Kelly Cristina Majima'
         ]
-        
         
         tabs = st.tabs(["Citações", "Intimações"])
         
@@ -111,19 +113,17 @@ def main() -> None:
                     hole=0.4,  # Isso cria o efeito de "rosca"
                 )
 
-                # Criar gráfico de barras com Plotly Express
-                fig_bar = px.bar(
-                    publicacoes_mensais,
-                    x="Mês/Ano",
-                    y="Quantidade",
-                    color="Nome",  # Adicionar a cor para diferenciar os usuários
-                    title="Publicações Mensais (Citações)",
-                    labels={
-                        "Mês/Ano": "Mês/Ano",
-                        "Quantidade": "Quantidade de Publicações",
-                        "Nome": "Nome do Usuário",
-                    },
-                    height=400,
+                # Novo gráfico de colunas usando Pyecharts
+                bar_chart = (
+                    Bar()
+                    .add_xaxis(publicacoes_mensais["Mês/Ano"].tolist())  # Adiciona os meses como eixos X
+                    .add_yaxis("Quantidade de Publicações", publicacoes_mensais["Quantidade"].tolist())  # Adiciona as quantidades
+                    .set_global_opts(
+                        title_opts=opts.TitleOpts(
+                            title="Publicações Mensais (Citações)", subtitle="Quantidade de Publicações"
+                        ),
+                        toolbox_opts=opts.ToolboxOpts(),
+                    )
                 )
 
                 # Exibir os gráficos lado a lado
@@ -132,7 +132,7 @@ def main() -> None:
                     st.plotly_chart(fig_pizza, height=500)
                 
                 with col2:
-                    st.plotly_chart(fig_bar)
+                    st_pyecharts(bar_chart, key="echarts")  # Adiciona o novo gráfico de colunas
 
                 # Exibir o resumo das publicações mensais
                 st.subheader("Publicações Mensais Resumidas")
@@ -185,19 +185,17 @@ def main() -> None:
                     hole=0.4,  # Isso cria o efeito de "rosca"
                 )
 
-                # Criar gráfico de barras com Plotly Express
-                fig_bar = px.bar(
-                    publicacoes_mensais,
-                    x="Mês/Ano",
-                    y="Quantidade",
-                    color="Nome",  # Adicionar a cor para diferenciar os usuários
-                    title="Publicações Mensais (Intimações)",
-                    labels={
-                        "Mês/Ano": "Mês/Ano",
-                        "Quantidade": "Quantidade de Publicações",
-                        "Nome": "Nome do Usuário",
-                    },
-                    height=400,
+                # Novo gráfico de colunas usando Pyecharts
+                bar_chart = (
+                    Bar()
+                    .add_xaxis(publicacoes_mensais["Mês/Ano"].tolist())
+                    .add_yaxis("Quantidade de Publicações", publicacoes_mensais["Quantidade"].tolist())
+                    .set_global_opts(
+                        title_opts=opts.TitleOpts(
+                            title="Publicações Mensais (Intimações)", subtitle="Quantidade de Publicações"
+                        ),
+                        toolbox_opts=opts.ToolboxOpts(),
+                    )
                 )
 
                 # Exibir os gráficos lado a lado
@@ -206,7 +204,7 @@ def main() -> None:
                     st.plotly_chart(fig_pizza, height=500)
                 
                 with col2:
-                    st.plotly_chart(fig_bar)
+                    st_pyecharts(bar_chart, key="echarts")  # Adiciona o novo gráfico de colunas
 
                 # Exibir o resumo das publicações mensais
                 st.subheader("Publicações Mensais Resumidas")
