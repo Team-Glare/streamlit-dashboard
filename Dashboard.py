@@ -136,6 +136,18 @@ def main() -> None:
 
                 # Exibir o resumo das publicações mensais
                 st.subheader("Publicações Mensais Resumidas")
+                
+                # Ajustando a largura da tabela com CSS
+                st.markdown(
+                    """
+                    <style>
+                    .dataframe {
+                        width: 100%;  /* Ajusta a largura da tabela */
+                    }
+                    </style>
+                    """,
+                    unsafe_allow_html=True,
+                )
                 st.table(publicacoes_mensais)
 
         # Exibindo as informações da aba de intimações
@@ -198,6 +210,18 @@ def main() -> None:
 
                 # Exibir o resumo das publicações mensais
                 st.subheader("Publicações Mensais Resumidas")
+                
+                # Ajustando a largura da tabela com CSS
+                st.markdown(
+                    """
+                    <style>
+                    .dataframe {
+                        width: 100%;  /* Ajusta a largura da tabela */
+                    }
+                    </style>
+                    """,
+                    unsafe_allow_html=True,
+                )
                 st.table(publicacoes_mensais)
 
     except pymysql.MySQLError as e:
