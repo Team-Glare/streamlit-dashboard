@@ -88,7 +88,7 @@ def main() -> None:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
 
-                # Contar o número de publicações por mês
+                # Contar o número de publicações por mês e nome
                 publicacoes_mensais = (
                     dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
                 )
@@ -162,7 +162,7 @@ def main() -> None:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
 
-                # Contar o número de publicações por mês
+                # Contar o número de publicações por mês e nome
                 publicacoes_mensais = (
                     dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
                 )
