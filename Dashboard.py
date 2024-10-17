@@ -116,27 +116,26 @@ def main() -> None:
 
                 col1, col2 = st.columns(2)
                 with col1:
-                    # Exibir o gráfico de barras no Streamlit
-                    st.plotly_chart(fig_bar)
-
-                with col2:
                     # Exibir o resumo das publicações mensais
                     st.subheader("Publicações Mensais Resumidas")
                     st.table(publicacoes_mensais)
 
-                # Criar gráfico de pizza com Plotly Express
-                publicacoes_por_usuario = dados['name'].value_counts().reset_index()
-                publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
+                with col2:
+                    # Criar gráfico de pizza com Plotly Express
+                    publicacoes_por_usuario = dados['name'].value_counts().reset_index()
+                    publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
 
-                fig_pizza = px.pie(
-                    publicacoes_por_usuario,
-                    names='Nome',
-                    values='Quantidade',
-                    title="Distribuição de Publicações por Usuário (Citações)",
-                    hole=0.4,  # Isso cria o efeito de "rosca"
-                )
+                    fig_pizza = px.pie(
+                        publicacoes_por_usuario,
+                        names='Nome',
+                        values='Quantidade',
+                        title="Distribuição de Publicações por Usuário (Citações)",
+                        hole=0.4,  # Isso cria o efeito de "rosca"
+                    )
 
-                st.plotly_chart(fig_pizza, height=500)
+                    st.plotly_chart(fig_pizza, height=500)
+                    
+                st.plotly_chart(fig_bar)
 
         # Exibindo as informações da aba de intimações
         with tabs[1]:
@@ -178,27 +177,26 @@ def main() -> None:
 
                 col1, col2 = st.columns(2)
                 with col1:
-                    # Exibir o gráfico de barras no Streamlit
-                    st.plotly_chart(fig_bar)
-
-                with col2:
                     # Exibir o resumo das publicações mensais
                     st.subheader("Publicações Mensais Resumidas")
                     st.table(publicacoes_mensais)
 
-                # Criar gráfico de pizza com Plotly Express
-                publicacoes_por_usuario = dados['name'].value_counts().reset_index()
-                publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
+                with col2:
+                    # Criar gráfico de pizza com Plotly Express
+                    publicacoes_por_usuario = dados['name'].value_counts().reset_index()
+                    publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
 
-                fig_pizza = px.pie(
-                    publicacoes_por_usuario,
-                    names='Nome',
-                    values='Quantidade',
-                    title="Distribuição de Publicações por Usuário (Intimações)",
-                    hole=0.4,  # Isso cria o efeito de "rosca"
-                )
+                    fig_pizza = px.pie(
+                        publicacoes_por_usuario,
+                        names='Nome',
+                        values='Quantidade',
+                        title="Distribuição de Publicações por Usuário (Intimações)",
+                        hole=0.4,  # Isso cria o efeito de "rosca"
+                    )
 
-                st.plotly_chart(fig_pizza, height=500)
+                    st.plotly_chart(fig_pizza, height=500)
+
+                st.plotly_chart(fig_bar)
 
     except pymysql.MySQLError as e:
         st.error(f"Erro na conexão com o banco de dados: {e}")
