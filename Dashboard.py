@@ -129,7 +129,7 @@ def main() -> None:
 
                 # Exibir o gráfico com pyecharts
                 st_pyecharts(b, key="echarts_intimacoes")
-                st.button("Atualizar dados")
+                st.button("Atualizar dados", key="btn2")
 
     except pymysql.MySQLError as e:
         st.error(f"Erro na conexão com o banco de dados: {e}")
