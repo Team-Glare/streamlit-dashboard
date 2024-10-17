@@ -1,7 +1,10 @@
+"""Dashboard do projeto."""
+
 import os
+
 import dotenv
 import pandas as pd
-import plotly.express as px
+import plotly.express as px  # type: ignore  # noqa: PGH003
 import pymysql
 import streamlit as st
 
@@ -18,6 +21,7 @@ user = os.getenv("DB_USER")
 password = os.getenv("DB_PASSWORD") or ""
 database = os.getenv("DB_DATABASE")
 
+
 def main() -> None:
     """Start the Streamlit app."""
     try:
@@ -33,113 +37,152 @@ def main() -> None:
             database=database,
         )
         
-        # Obter os IDs e nomes da tabela 'users'
-        cursor = conn.cursor()
-        cursor.execute("SELECT id, name FROM users")
-        ids_nomes = cursor.fetchall()
-        ids_nomes_df = pd.DataFrame(ids_nomes, columns=["id", "name"])
-
-        # Lista de IDs de interesse
-        ids = ids_nomes_df["id"].tolist()
+        names = [
+            'Natália Franco Massuia e Marcondes',
+            'Anamaria Barbosa Ebram Fernandes',
+            'Leonardo Tokuda Pereira',
+            'Leonardo Warmling Candido da Silva',
+            'Marcelo Moura da Silva',
+            'Pedro Carvalho Mitre Chaves',
+            'Kelly Cristina Majima'
+        ]
+        
         
         tabs = st.tabs([ "Citações", "Intimações"])
         
         cursor = conn.cursor()
+        # Executar a consulta SQL
         cursor.execute(
             "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PTB' AND natureza LIKE 'int%' COLLATE utf8mb4_unicode_ci",
         )
         intimacoes = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
-
+        
+        
+        
+        # Criar um DataFrame a partir dos resultados e nomes de colunas
         intimacoes_dados = pd.DataFrame(intimacoes, columns=colunas)
-        intimacoes_dados = intimacoes_dados[intimacoes_dados['id'].isin(ids)]
+        intimacoes_dados = intimacoes_dados[intimacoes_dados['name'].isin(names)]
 
         cursor = conn.cursor()
+        # Executar a consulta SQL
         cursor.execute(
             "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PTB' AND natureza LIKE 'cit%' COLLATE utf8mb4_unicode_ci",
         )
         citacoes = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
 
+        # Criar um DataFrame a partir dos resultados e nomes de colunas
         citacoes_dados = pd.DataFrame(citacoes, columns=colunas)
-        citacoes_dados = citacoes_dados[citacoes_dados['id'].isin(ids)]
+        citacoes_dados = citacoes_dados[citacoes_dados['name'].isin(names)]
 
+        # Fechar a conexão com o banco de dados
         conn.close()
         
         with tabs[0]:
             dados = citacoes_dados
+            # Calcular o total de publicações
             total_publicacoes = len(dados)
             st.metric(label="Quantidade Total", value=total_publicacoes)
 
+            # Verifica se há uma coluna 'datapub' no formato adequado
             if "datapub" in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
 
-                # Agrupar por 'id' e 'mes_ano' para contar as publicações por pessoa e mês
-                publicacoes_mensais = dados.groupby(["mes_ano", "id"]).size().reset_index(name="quantidade")
+                # Contar o número de publicações por mês
+                publicacoes_mensais = (  # type: ignore  # noqa: PGH003
+                    dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
+                )
 
-                # Unir com a tabela de nomes para exibir o nome correto no gráfico
-                publicacoes_mensais = publicacoes_mensais.merge(ids_nomes_df, on="id")
+                # Renomear colunas
+                publicacoes_mensais.rename(
+                    columns={"mes_ano": "Mês/Ano", "name": "Nome", "quantidade": "Quantidade"},
+                    inplace=True,
+                )
 
+                # Criar gráfico de barras com Plotly Express
                 fig = px.bar(
                     publicacoes_mensais,
-                    x="mes_ano",
-                    y="quantidade",
-                    color="name",  # Adiciona cores por nome
-                    title="Publicações Mensais por Pessoa",
-                    labels={
-                        "mes_ano": "Mês/Ano",
-                        "quantidade": "Quantidade de Publicações",
-                        "name": "Pessoa"
-                    },
-                    height=400,
+                     x="Mês/Ano",
+                     y="Quantidade",
+                     color="Nome",  # Adicionar a cor para diferenciar os usuários
+                     title="Publicações Mensais",
+                     labels={
+                      "Mês/Ano": "Mês/Ano",
+                      "Quantidade": "Quantidade de Publicações",
+                      "Nome": "Nome do Usuário",
+                 },
+                height=400,
                 )
+                
+                
+
+                
 
                 col1, col2 = st.columns(2)
                 with col1:
+                    # Exibir o gráfico no Streamlit
                     st.plotly_chart(fig)
 
                 with col2:
-                    st.subheader("Publicações Mensais por Pessoa")
+                    # Exibir o resumo das publicações mensais
+                    st.subheader("Publicações Mensais Resumidas")
                     st.table(publicacoes_mensais)
 
         with tabs[1]:
             dados = intimacoes_dados
+
+            # Calcular o total de publicações
             total_publicacoes = len(dados)
             st.metric(label="Quantidade Total", value=total_publicacoes)
 
+            # Verifica se há uma coluna 'datapub' no formato adequado
             if "datapub" in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
 
-                publicacoes_mensais = dados.groupby(["mes_ano", "id"]).size().reset_index(name="quantidade")
+                # Contar o número de publicações por mês
+                publicacoes_mensais = (  # type: ignore  # noqa: PGH003
+                    dados.groupby("mes_ano").size().reset_index(name="quantidade")
+                )
 
-                # Unir com a tabela de nomes para exibir o nome correto
-                publicacoes_mensais = publicacoes_mensais.merge(ids_nomes_df, on="id")
+                # Renomear colunas
+                publicacoes_mensais.rename(
+                    columns={"mes_ano": "Mês/Ano", "quantidade": "Quantidade"},
+                    inplace=True,
+                )
 
+                # Criar gráfico de barras com Plotly Express
                 fig = px.bar(
                     publicacoes_mensais,
-                    x="mes_ano",
-                    y="quantidade",
-                    color="name",
-                    title="Intimações Mensais por Pessoa",
+                    x="Mês/Ano",
+                    y="Quantidade",
+                    title="Publicações Mensais",
                     labels={
-                        "mes_ano": "Mês/Ano",
-                        "quantidade": "Quantidade de Intimações",
-                        "name": "Pessoa"
+                        "Mês/Ano": "Mês/Ano",
+                        "Quantidade": "Quantidade de Publicações",
                     },
                     height=400,
                 )
+                
+                
+
+                
 
                 col1, col2 = st.columns(2)
                 with col1:
+                    # Exibir o gráfico no Streamlit
                     st.plotly_chart(fig)
 
                 with col2:
-                    st.subheader("Intimações Mensais por Pessoa")
+                    # Exibir o resumo das publicações mensais
+                    st.subheader("Publicações Mensais Resumidas")
                     st.table(publicacoes_mensais)
+
 
     except pymysql.MySQLError as e:
         st.error(f"Erro na conexão com o banco de dados: {e}")
+
 
 main()
