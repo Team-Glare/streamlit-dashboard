@@ -48,36 +48,35 @@ def main() -> None:
         ]
         
         
-        tabs = st.tabs([ "Citações", "Intimações", "Gráfico de Pizza"])
+        tabs = st.tabs([ "Citações", "Intimações"])
         
         cursor = conn.cursor()
-        # Executar a consulta SQL
-        cursor.execute(
-            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PTB' AND natureza LIKE 'int%' COLLATE utf8mb4_unicode_ci",
-        )
-        intimacoes = cursor.fetchall()
-        colunas = [desc[0] for desc in cursor.description]
-        
-        
-        # Criar um DataFrame a partir dos resultados e nomes de colunas
-        intimacoes_dados = pd.DataFrame(intimacoes, columns=colunas)
-        intimacoes_dados = intimacoes_dados[intimacoes_dados['name'].isin(names)]
-
-        cursor = conn.cursor()
-        # Executar a consulta SQL
+        # Executar a consulta SQL para citações
         cursor.execute(
             "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PTB' AND natureza LIKE 'cit%' COLLATE utf8mb4_unicode_ci",
         )
         citacoes = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
-
+        
         # Criar um DataFrame a partir dos resultados e nomes de colunas
         citacoes_dados = pd.DataFrame(citacoes, columns=colunas)
         citacoes_dados = citacoes_dados[citacoes_dados['name'].isin(names)]
 
+        # Executar a consulta SQL para intimações
+        cursor.execute(
+            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PTB' AND natureza LIKE 'int%' COLLATE utf8mb4_unicode_ci",
+        )
+        intimacoes = cursor.fetchall()
+        colunas = [desc[0] for desc in cursor.description]
+
+        # Criar um DataFrame a partir dos resultados e nomes de colunas
+        intimacoes_dados = pd.DataFrame(intimacoes, columns=colunas)
+        intimacoes_dados = intimacoes_dados[intimacoes_dados['name'].isin(names)]
+
         # Fechar a conexão com o banco de dados
         conn.close()
         
+        # Exibindo as informações da aba de citações
         with tabs[0]:
             dados = citacoes_dados
             # Calcular o total de publicações
@@ -101,12 +100,12 @@ def main() -> None:
                 )
 
                 # Criar gráfico de barras com Plotly Express
-                fig = px.bar(
+                fig_bar = px.bar(
                     publicacoes_mensais,
                     x="Mês/Ano",
                     y="Quantidade",
                     color="Nome",  # Adicionar a cor para diferenciar os usuários
-                    title="Publicações Mensais",
+                    title="Publicações Mensais (Citações)",
                     labels={
                         "Mês/Ano": "Mês/Ano",
                         "Quantidade": "Quantidade de Publicações",
@@ -117,17 +116,31 @@ def main() -> None:
 
                 col1, col2 = st.columns(2)
                 with col1:
-                    # Exibir o gráfico no Streamlit
-                    st.plotly_chart(fig)
+                    # Exibir o gráfico de barras no Streamlit
+                    st.plotly_chart(fig_bar)
 
                 with col2:
                     # Exibir o resumo das publicações mensais
                     st.subheader("Publicações Mensais Resumidas")
                     st.table(publicacoes_mensais)
 
+                # Criar gráfico de pizza com Plotly Express
+                publicacoes_por_usuario = dados['name'].value_counts().reset_index()
+                publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
+
+                fig_pizza = px.pie(
+                    publicacoes_por_usuario,
+                    names='Nome',
+                    values='Quantidade',
+                    title="Distribuição de Publicações por Usuário (Citações)",
+                    hole=0.4,  # Isso cria o efeito de "rosca"
+                )
+
+                st.plotly_chart(fig_pizza, height=500)
+
+        # Exibindo as informações da aba de intimações
         with tabs[1]:
             dados = intimacoes_dados
-
             # Calcular o total de publicações
             total_publicacoes = len(dados)
             st.metric(label="Quantidade Total", value=total_publicacoes)
@@ -139,58 +152,53 @@ def main() -> None:
 
                 # Contar o número de publicações por mês
                 publicacoes_mensais = (
-                    dados.groupby("mes_ano").size().reset_index(name="quantidade")
+                    dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
                 )
 
                 # Renomear colunas
                 publicacoes_mensais.rename(
-                    columns={"mes_ano": "Mês/Ano", "quantidade": "Quantidade"},
+                    columns={"mes_ano": "Mês/Ano", "name": "Nome", "quantidade": "Quantidade"},
                     inplace=True,
                 )
 
                 # Criar gráfico de barras com Plotly Express
-                fig = px.bar(
+                fig_bar = px.bar(
                     publicacoes_mensais,
                     x="Mês/Ano",
                     y="Quantidade",
-                    title="Publicações Mensais",
+                    color="Nome",  # Adicionar a cor para diferenciar os usuários
+                    title="Publicações Mensais (Intimações)",
                     labels={
                         "Mês/Ano": "Mês/Ano",
                         "Quantidade": "Quantidade de Publicações",
+                        "Nome": "Nome do Usuário",
                     },
                     height=400,
                 )
 
                 col1, col2 = st.columns(2)
                 with col1:
-                    # Exibir o gráfico no Streamlit
-                    st.plotly_chart(fig)
+                    # Exibir o gráfico de barras no Streamlit
+                    st.plotly_chart(fig_bar)
 
                 with col2:
                     # Exibir o resumo das publicações mensais
                     st.subheader("Publicações Mensais Resumidas")
                     st.table(publicacoes_mensais)
-        
-        with tabs[2]:
-            dados = citacoes_dados  # Ou intimacoes_dados, dependendo do que você preferir
 
-            # Verifica se há uma coluna 'name' para agrupar os dados
-            if "name" in dados.columns:
+                # Criar gráfico de pizza com Plotly Express
                 publicacoes_por_usuario = dados['name'].value_counts().reset_index()
                 publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
 
-                # Criar gráfico de pizza com Plotly Express
                 fig_pizza = px.pie(
                     publicacoes_por_usuario,
                     names='Nome',
                     values='Quantidade',
-                    title="Distribuição de Publicações por Usuário",
+                    title="Distribuição de Publicações por Usuário (Intimações)",
                     hole=0.4,  # Isso cria o efeito de "rosca"
                 )
 
-                # Exibir o gráfico no Streamlit
                 st.plotly_chart(fig_pizza, height=500)
-
 
     except pymysql.MySQLError as e:
         st.error(f"Erro na conexão com o banco de dados: {e}")
