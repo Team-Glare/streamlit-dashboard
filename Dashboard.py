@@ -99,6 +99,21 @@ def main() -> None:
                     inplace=True,
                 )
 
+                # Criar gráfico de pizza com Plotly Express
+                publicacoes_por_usuario = dados['name'].value_counts().reset_index()
+                publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
+
+                fig_pizza = px.pie(
+                    publicacoes_por_usuario,
+                    names='Nome',
+                    values='Quantidade',
+                    title="Distribuição de Publicações por Usuário (Citações)",
+                    hole=0.4,  # Isso cria o efeito de "rosca"
+                )
+
+                # Exibir o gráfico de pizza
+                st.plotly_chart(fig_pizza, height=500)
+
                 # Criar gráfico de barras com Plotly Express
                 fig_bar = px.bar(
                     publicacoes_mensais,
@@ -114,28 +129,12 @@ def main() -> None:
                     height=400,
                 )
 
-                col1, col2 = st.columns(2)
-                with col1:
-                    # Exibir o resumo das publicações mensais
-                    st.subheader("Publicações Mensais Resumidas")
-                    st.table(publicacoes_mensais)
-
-                with col2:
-                    # Criar gráfico de pizza com Plotly Express
-                    publicacoes_por_usuario = dados['name'].value_counts().reset_index()
-                    publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
-
-                    fig_pizza = px.pie(
-                        publicacoes_por_usuario,
-                        names='Nome',
-                        values='Quantidade',
-                        title="Distribuição de Publicações por Usuário (Citações)",
-                        hole=0.4,  # Isso cria o efeito de "rosca"
-                    )
-
-                    st.plotly_chart(fig_pizza, height=500)
-                    
+                # Exibir o gráfico de barras
                 st.plotly_chart(fig_bar)
+
+                # Exibir o resumo das publicações mensais
+                st.subheader("Publicações Mensais Resumidas")
+                st.table(publicacoes_mensais)
 
         # Exibindo as informações da aba de intimações
         with tabs[1]:
@@ -160,6 +159,21 @@ def main() -> None:
                     inplace=True,
                 )
 
+                # Criar gráfico de pizza com Plotly Express
+                publicacoes_por_usuario = dados['name'].value_counts().reset_index()
+                publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
+
+                fig_pizza = px.pie(
+                    publicacoes_por_usuario,
+                    names='Nome',
+                    values='Quantidade',
+                    title="Distribuição de Publicações por Usuário (Intimações)",
+                    hole=0.4,  # Isso cria o efeito de "rosca"
+                )
+
+                # Exibir o gráfico de pizza
+                st.plotly_chart(fig_pizza, height=500)
+
                 # Criar gráfico de barras com Plotly Express
                 fig_bar = px.bar(
                     publicacoes_mensais,
@@ -175,28 +189,12 @@ def main() -> None:
                     height=400,
                 )
 
-                col1, col2 = st.columns(2)
-                with col1:
-                    # Exibir o resumo das publicações mensais
-                    st.subheader("Publicações Mensais Resumidas")
-                    st.table(publicacoes_mensais)
-
-                with col2:
-                    # Criar gráfico de pizza com Plotly Express
-                    publicacoes_por_usuario = dados['name'].value_counts().reset_index()
-                    publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
-
-                    fig_pizza = px.pie(
-                        publicacoes_por_usuario,
-                        names='Nome',
-                        values='Quantidade',
-                        title="Distribuição de Publicações por Usuário (Intimações)",
-                        hole=0.4,  # Isso cria o efeito de "rosca"
-                    )
-
-                    st.plotly_chart(fig_pizza, height=500)
-
+                # Exibir o gráfico de barras
                 st.plotly_chart(fig_bar)
+
+                # Exibir o resumo das publicações mensais
+                st.subheader("Publicações Mensais Resumidas")
+                st.table(publicacoes_mensais)
 
     except pymysql.MySQLError as e:
         st.error(f"Erro na conexão com o banco de dados: {e}")
