@@ -2,6 +2,7 @@ import os
 import dotenv
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 import pymysql
 import streamlit as st
 from pyecharts.charts import Bar
@@ -118,6 +119,17 @@ def main() -> None:
                 with col2:
                     st_pyecharts(bar, key="echarts_citacoes")
 
+                # Gráfico de barras com Plotly abaixo do Pyecharts
+                fig_barras_plotly = px.bar(
+                    publicacoes_mensais,
+                    x="mes_ano",
+                    y="quantidade",
+                    color="name",
+                    title="Publicações Mensais por Usuário (Citações)"
+                )
+
+                st.plotly_chart(fig_barras_plotly, use_container_width=True)
+
         # Exibindo as informações da aba de intimações
         with tabs[1]:
             dados = intimacoes_dados
@@ -164,6 +176,17 @@ def main() -> None:
                     st.plotly_chart(fig_pizza, height=500)
                 with col2:
                     st_pyecharts(bar, key="echarts_intimacoes")
+
+                # Gráfico de barras com Plotly abaixo do Pyecharts
+                fig_barras_plotly = px.bar(
+                    publicacoes_mensais,
+                    x="mes_ano",
+                    y="quantidade",
+                    color="name",
+                    title="Publicações Mensais por Usuário (Intimações)"
+                )
+
+                st.plotly_chart(fig_barras_plotly, use_container_width=True)
 
     except pymysql.MySQLError as e:
         st.error(f"Erro na conexão com o banco de dados: {e}")
