@@ -21,7 +21,6 @@ user = os.getenv("DB_USER")
 password = os.getenv("DB_PASSWORD") or ""
 database = os.getenv("DB_DATABASE")
 
-
 def main() -> None:
     """Start the Streamlit app."""
     try:
@@ -126,6 +125,7 @@ def main() -> None:
                     color="name",
                     title="Publicações Mensais por Usuário (Citações)",
                     text_auto=True,
+                    labels={"mes_ano": "Mês e Ano"},  # Alterando o rótulo do eixo X
                 )
 
                 # Exibir gráfico de barras do Plotly
@@ -189,7 +189,8 @@ def main() -> None:
                     x="mes_ano",
                     y="quantidade",
                     color="name",
-                    title="Publicações Mensais por Usuário (Intimações)"
+                    title="Publicações Mensais por Usuário (Intimações)",
+                    labels={"mes_ano": "Mês e Ano"},  # Alterando o rótulo do eixo X
                 )
 
                 # Exibir gráfico de barras do Plotly
@@ -202,6 +203,5 @@ def main() -> None:
 
     except pymysql.MySQLError as e:
         st.error(f"Erro na conexão com o banco de dados: {e}")
-
 
 main()
