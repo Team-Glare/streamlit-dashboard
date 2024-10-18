@@ -2,7 +2,6 @@ import os
 import dotenv
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 import pymysql
 import streamlit as st
 from pyecharts.charts import Bar
@@ -86,6 +85,10 @@ def main() -> None:
                     dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
                 )
 
+                # Tabela com o quantitativo mensal
+                st.subheader("Tabela de Quantitativo Mensal (Citações)")
+                st.dataframe(publicacoes_mensais)
+
                 # Gráfico de pizza com Plotly
                 publicacoes_por_usuario = dados['name'].value_counts().reset_index()
                 publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
@@ -144,6 +147,10 @@ def main() -> None:
                 publicacoes_mensais = (
                     dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
                 )
+
+                # Tabela com o quantitativo mensal
+                st.subheader("Tabela de Quantitativo Mensal (Intimações)")
+                st.dataframe(publicacoes_mensais)
 
                 # Gráfico de pizza com Plotly
                 publicacoes_por_usuario = dados['name'].value_counts().reset_index()
