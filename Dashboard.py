@@ -173,7 +173,7 @@ def main() -> None:
                         publicacoes_mensais.groupby("mes_ano")["quantidade"].sum().tolist()
                     )
                     .set_global_opts(
-                        title_opts=opts.TitleOpts(title="Publicações Mensais (Intimações)", subtitle="Total por mês"),
+                        title_opts=opts.TitleOpts(title="Publicações Mensais (Citações)", subtitle="Total por mês"),
                         toolbox_opts=opts.ToolboxOpts(),
                     )
                 )
@@ -183,7 +183,7 @@ def main() -> None:
                 with col1:
                     st.plotly_chart(fig_pizza, height=500)
                 with col2:
-                    st_pyecharts(bar, key="echarts_intimacoes")
+                    st_pyecharts(bar)
 
                 # Gráfico de barras com Plotly
                 fig_barras_plotly = px.bar(
