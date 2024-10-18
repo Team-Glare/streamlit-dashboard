@@ -177,15 +177,37 @@ def main() -> None:
                         toolbox_opts=opts.ToolboxOpts(),
                     )
                 )
+                
+                # Gráfico de barras com Plotly
+                fig_barras_plotly = px.bar(
+                    publicacoes_mensais,
+                    x="mes_ano",
+                    y="quantidade",
+                    color="name",
+                    title="Publicações Mensais por Usuário (Intimações)",
+                    text_auto=True,
+                    labels={"mes_ano": "Mês e Ano",
+                            "quantidade": "Quantidade",
+                            "name": "Nome"},  # Alterando o rótulo do eixo X
+                )
 
                 # Exibir gráficos lado a lado
                 col1, col2 = st.columns(2)
                 with col1:
                     st.plotly_chart(fig_pizza, height=500)
+                    
+                    # Exibir gráfico de barras do Plotly
+                    st.subheader("Gráfico de Barras (Intimações)")
+                    st.plotly_chart(fig_barras_plotly, use_container_width=True)
+                    
                 with col2:
                     st_pyecharts(bar)
+                    
+                    # Tabela com o quantitativo mensal
+                    st.subheader("Tabela de Quantitativo Mensal (Intimações)")
+                    st.dataframe(publicacoes_mensais)
 
-                # Gráfico de barras com Plotly
+                """ # Gráfico de barras com Plotly
                 fig_barras_plotly = px.bar(
                     publicacoes_mensais,
                     x="mes_ano",
@@ -205,7 +227,7 @@ def main() -> None:
 
                 # Tabela com o quantitativo mensal
                 st.subheader("Tabela de Quantitativo Mensal (Intimações)")
-                st.dataframe(publicacoes_mensais)
+                st.dataframe(publicacoes_mensais) """
 
     except pymysql.MySQLError as e:
         st.error(f"Erro na conexão com o banco de dados: {e}")
