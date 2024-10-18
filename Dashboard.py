@@ -136,7 +136,8 @@ def main() -> None:
 
                 # Tabela com o quantitativo mensal
                 st.subheader("Tabela de Quantitativo Mensal (Citações)")
-                st.dataframe({"mes_ano": "Mês e Ano",
+                st.dataframe(publicacoes_mensais,
+                             labels={"mes_ano": "Mês e Ano",
                             "quantidade": "Quantidade",
                             "name": "Nome"}
                 )
