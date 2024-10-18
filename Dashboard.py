@@ -97,18 +97,22 @@ def main() -> None:
                     hole=0.4,
                 )
 
-                # Gráfico de barras com Pyecharts
-                bar = (
-                    Bar()
-                    .add_xaxis(list(publicacoes_mensais["mes_ano"].unique()))
-                    .add_yaxis(
-                        "Quantidade de Publicações",
-                        publicacoes_mensais.groupby("mes_ano")["quantidade"].sum().tolist()
-                    )
-                    .set_global_opts(
-                        title_opts=opts.TitleOpts(title="Publicações Mensais (Citações)", subtitle="Total por mês"),
-                        toolbox_opts=opts.ToolboxOpts(),
-                    )
+                # Gráfico de barras com Pyecharts, separando os dados por nome
+                bar = Bar()
+                unique_usuarios = publicacoes_mensais['name'].unique()
+                meses = list(publicacoes_mensais["mes_ano"].unique())
+
+                # Adicionar dados para cada usuário
+                for usuario in unique_usuarios:
+                    dados_usuario = publicacoes_mensais[publicacoes_mensais["name"] == usuario]
+                    quantidade_por_mes = [dados_usuario[dados_usuario["mes_ano"] == mes]["quantidade"].sum() for mes in meses]
+                    bar.add_yaxis(usuario, quantidade_por_mes)
+
+                bar.add_xaxis(meses)
+                bar.set_global_opts(
+                    title_opts=opts.TitleOpts(title="Publicações Mensais (Citações)", subtitle="Total por mês e por usuário"),
+                    toolbox_opts=opts.ToolboxOpts(),
+                    xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(rotate=-45))
                 )
 
                 # Exibir gráficos lado a lado
@@ -144,18 +148,22 @@ def main() -> None:
                     hole=0.4,
                 )
 
-                # Gráfico de barras com Pyecharts
-                bar = (
-                    Bar()
-                    .add_xaxis(list(publicacoes_mensais["mes_ano"].unique()))
-                    .add_yaxis(
-                        "Quantidade de Publicações",
-                        publicacoes_mensais.groupby("mes_ano")["quantidade"].sum().tolist()
-                    )
-                    .set_global_opts(
-                        title_opts=opts.TitleOpts(title="Publicações Mensais (Intimações)", subtitle="Total por mês"),
-                        toolbox_opts=opts.ToolboxOpts(),
-                    )
+                # Gráfico de barras com Pyecharts, separando os dados por nome
+                bar = Bar()
+                unique_usuarios = publicacoes_mensais['name'].unique()
+                meses = list(publicacoes_mensais["mes_ano"].unique())
+
+                # Adicionar dados para cada usuário
+                for usuario in unique_usuarios:
+                    dados_usuario = publicacoes_mensais[publicacoes_mensais["name"] == usuario]
+                    quantidade_por_mes = [dados_usuario[dados_usuario["mes_ano"] == mes]["quantidade"].sum() for mes in meses]
+                    bar.add_yaxis(usuario, quantidade_por_mes)
+
+                bar.add_xaxis(meses)
+                bar.set_global_opts(
+                    title_opts=opts.TitleOpts(title="Publicações Mensais (Intimações)", subtitle="Total por mês e por usuário"),
+                    toolbox_opts=opts.ToolboxOpts(),
+                    xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(rotate=-45))
                 )
 
                 # Exibir gráficos lado a lado
