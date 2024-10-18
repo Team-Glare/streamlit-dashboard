@@ -186,7 +186,7 @@ def main() -> None:
                 # Gráfico de barras com Plotly
                 fig_barras_plotly = px.bar(
                     publicacoes_mensais,
-                    x="mespano",
+                    x="mes_ano",
                     y="quantidade",
                     color="name",
                     title="Publicações Mensais por Usuário (Intimações)"
