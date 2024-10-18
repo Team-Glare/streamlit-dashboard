@@ -85,10 +85,6 @@ def main() -> None:
                     dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
                 )
 
-                # Tabela com o quantitativo mensal
-                st.subheader("Tabela de Quantitativo Mensal (Citações)")
-                st.dataframe(publicacoes_mensais)
-
                 # Gráfico de pizza com Plotly
                 publicacoes_por_usuario = dados['name'].value_counts().reset_index()
                 publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
@@ -115,11 +111,15 @@ def main() -> None:
                     )
                 )
 
-                # Exibir gráficos lado a lado
-                col1, col2 = st.columns(2)
+                # Exibir tabela e gráficos lado a lado
+                col1, col2 = st.columns([2, 3])  # Ajuste a proporção de colunas conforme necessário
                 with col1:
-                    st.plotly_chart(fig_pizza, height=500)
+                    # Tabela com o quantitativo mensal
+                    st.subheader("Tabela de Quantitativo Mensal (Citações)")
+                    st.dataframe(publicacoes_mensais)
+
                 with col2:
+                    st.plotly_chart(fig_pizza, height=500)
                     st_pyecharts(bar, key="echarts_citacoes")
 
                 # Gráfico de barras com Plotly abaixo do Pyecharts
@@ -148,10 +148,6 @@ def main() -> None:
                     dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
                 )
 
-                # Tabela com o quantitativo mensal
-                st.subheader("Tabela de Quantitativo Mensal (Intimações)")
-                st.dataframe(publicacoes_mensais)
-
                 # Gráfico de pizza com Plotly
                 publicacoes_por_usuario = dados['name'].value_counts().reset_index()
                 publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
@@ -178,11 +174,15 @@ def main() -> None:
                     )
                 )
 
-                # Exibir gráficos lado a lado
-                col1, col2 = st.columns(2)
+                # Exibir tabela e gráficos lado a lado
+                col1, col2 = st.columns([2, 3])  # Ajuste a proporção de colunas conforme necessário
                 with col1:
-                    st.plotly_chart(fig_pizza, height=500)
+                    # Tabela com o quantitativo mensal
+                    st.subheader("Tabela de Quantitativo Mensal (Intimações)")
+                    st.dataframe(publicacoes_mensais)
+
                 with col2:
+                    st.plotly_chart(fig_pizza, height=500)
                     st_pyecharts(bar, key="echarts_intimacoes")
 
                 # Gráfico de barras com Plotly abaixo do Pyecharts
@@ -194,7 +194,7 @@ def main() -> None:
                     title="Publicações Mensais por Usuário (Intimações)"
                 )
 
-                st.plotly_chart(fig_barras_plotly, use_container_width=True, )
+                st.plotly_chart(fig_barras_plotly, use_container_width=True)
 
     except pymysql.MySQLError as e:
         st.error(f"Erro na conexão com o banco de dados: {e}")
