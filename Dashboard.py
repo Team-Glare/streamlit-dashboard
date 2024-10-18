@@ -22,7 +22,7 @@ password = os.getenv("DB_PASSWORD") or ""
 database = os.getenv("DB_DATABASE")
 
 def main() -> None:
-    """Inicia o aplicativo Streamlit."""
+    """Start the Streamlit app."""
     try:
         if not host or not user or not database:
             st.error("Faltam informações de conexão com o banco de dados.")
@@ -192,8 +192,12 @@ def main() -> None:
                     y="quantidade",
                     color="name",
                     title="Publicações Mensais por Usuário (Intimações)",
-                    labels={"mes_ano": "Mês e Ano"},  # Alterando o rótulo do eixo X
+                    text_auto=True,
+                    labels={"mes_ano": "Mês e Ano",
+                            "quantidade": "Quantidade",
+                            "name": "Nome"},  # Alterando o rótulo do eixo X
                 )
+                
 
                 # Exibir gráfico de barras do Plotly
                 st.subheader("Gráfico de Barras (Intimações)")
