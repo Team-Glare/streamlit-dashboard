@@ -85,10 +85,6 @@ def main() -> None:
                     dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
                 )
 
-                # Tabela com o quantitativo mensal
-                st.subheader("Tabela de Quantitativo Mensal (Citações)")
-                st.dataframe(publicacoes_mensais)
-
                 # Gráfico de pizza com Plotly
                 publicacoes_por_usuario = dados['name'].value_counts().reset_index()
                 publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
@@ -122,7 +118,7 @@ def main() -> None:
                 with col2:
                     st_pyecharts(bar, key="echarts_citacoes")
 
-                # Gráfico de barras com Plotly abaixo do Pyecharts
+                # Gráfico de barras com Plotly
                 fig_barras_plotly = px.bar(
                     publicacoes_mensais,
                     x="mes_ano",
@@ -133,7 +129,12 @@ def main() -> None:
                 )
 
                 # Exibir gráfico de barras do Plotly
+                st.subheader("Gráfico de Barras (Citações)")
                 st.plotly_chart(fig_barras_plotly, use_container_width=True)
+
+                # Tabela com o quantitativo mensal
+                st.subheader("Tabela de Quantitativo Mensal (Citações)")
+                st.dataframe(publicacoes_mensais)
 
         # Exibindo as informações da aba de intimações
         with tabs[1]:
@@ -148,10 +149,6 @@ def main() -> None:
                 publicacoes_mensais = (
                     dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
                 )
-
-                # Tabela com o quantitativo mensal
-                st.subheader("Tabela de Quantitativo Mensal (Intimações)")
-                st.dataframe(publicacoes_mensais)
 
                 # Gráfico de pizza com Plotly
                 publicacoes_por_usuario = dados['name'].value_counts().reset_index()
@@ -186,7 +183,7 @@ def main() -> None:
                 with col2:
                     st_pyecharts(bar, key="echarts_intimacoes")
 
-                # Gráfico de barras com Plotly abaixo do Pyecharts
+                # Gráfico de barras com Plotly
                 fig_barras_plotly = px.bar(
                     publicacoes_mensais,
                     x="mes_ano",
@@ -196,7 +193,12 @@ def main() -> None:
                 )
 
                 # Exibir gráfico de barras do Plotly
+                st.subheader("Gráfico de Barras (Intimações)")
                 st.plotly_chart(fig_barras_plotly, use_container_width=True)
+
+                # Tabela com o quantitativo mensal
+                st.subheader("Tabela de Quantitativo Mensal (Intimações)")
+                st.dataframe(publicacoes_mensais)
 
     except pymysql.MySQLError as e:
         st.error(f"Erro na conexão com o banco de dados: {e}")
