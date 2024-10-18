@@ -136,7 +136,10 @@ def main() -> None:
 
                 # Tabela com o quantitativo mensal
                 st.subheader("Tabela de Quantitativo Mensal (Citações)")
-                st.dataframe(publicacoes_mensais)
+                st.dataframe({"mes_ano": "Mês e Ano",
+                            "quantidade": "Quantidade",
+                            "name": "Nome"}
+                )
 
         # Exibindo as informações da aba de intimações
         with tabs[1]:
