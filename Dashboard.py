@@ -85,27 +85,38 @@ def main() -> None:
                     dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
                 )
 
-                # Preparação do gráfico de barras com Pyecharts
-                bar = Bar()
-                meses = sorted(publicacoes_mensais["mes_ano"].unique())
+                # Gráfico de pizza com Plotly
+                publicacoes_por_usuario = dados['name'].value_counts().reset_index()
+                publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
 
-                # Adicionar os dados para cada usuário individualmente
-                for usuario in names:
-                    dados_usuario = publicacoes_mensais[publicacoes_mensais["name"] == usuario]
-                    # Garantir que os valores de cada mês sejam correspondentes ao eixo x
-                    quantidade_por_mes = [dados_usuario[dados_usuario["mes_ano"] == mes]["quantidade"].sum() if not dados_usuario[dados_usuario["mes_ano"] == mes].empty else 0 for mes in meses]
-                    bar.add_yaxis(usuario, quantidade_por_mes)
-
-                bar.add_xaxis(meses)
-                bar.set_global_opts(
-                    title_opts=opts.TitleOpts(title="Publicações Mensais (Citações)", subtitle="Total por mês e por usuário"),
-                    toolbox_opts=opts.ToolboxOpts(),
-                    xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(rotate=-45)),
-                    yaxis_opts=opts.AxisOpts(name="Quantidade")
+                fig_pizza = px.pie(
+                    publicacoes_por_usuario,
+                    names='Nome',
+                    values='Quantidade',
+                    title="Distribuição de Publicações por Usuário (Citações)",
+                    hole=0.4,
                 )
 
-                # Exibir o gráfico de barras no Streamlit
-                st_pyecharts(bar, key="echarts_citacoes")
+                # Gráfico de barras com Pyecharts
+                bar = (
+                    Bar()
+                    .add_xaxis(list(publicacoes_mensais["mes_ano"].unique()))
+                    .add_yaxis(
+                        "Quantidade de Publicações",
+                        publicacoes_mensais.groupby("mes_ano")["quantidade"].sum().tolist()
+                    )
+                    .set_global_opts(
+                        title_opts=opts.TitleOpts(title="Publicações Mensais (Citações)", subtitle="Total por mês"),
+                        toolbox_opts=opts.ToolboxOpts(),
+                    )
+                )
+
+                # Exibir gráficos lado a lado
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.plotly_chart(fig_pizza, height=500)
+                with col2:
+                    st_pyecharts(bar, key="echarts_citacoes")
 
         # Exibindo as informações da aba de intimações
         with tabs[1]:
@@ -121,26 +132,38 @@ def main() -> None:
                     dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
                 )
 
-                # Preparação do gráfico de barras com Pyecharts
-                bar = Bar()
-                meses = sorted(publicacoes_mensais["mes_ano"].unique())
+                # Gráfico de pizza com Plotly
+                publicacoes_por_usuario = dados['name'].value_counts().reset_index()
+                publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
 
-                # Adicionar os dados para cada usuário individualmente
-                for usuario in names:
-                    dados_usuario = publicacoes_mensais[publicacoes_mensais["name"] == usuario]
-                    quantidade_por_mes = [dados_usuario[dados_usuario["mes_ano"] == mes]["quantidade"].sum() if not dados_usuario[dados_usuario["mes_ano"] == mes].empty else 0 for mes in meses]
-                    bar.add_yaxis(usuario, quantidade_por_mes)
-
-                bar.add_xaxis(meses)
-                bar.set_global_opts(
-                    title_opts=opts.TitleOpts(title="Publicações Mensais (Intimações)", subtitle="Total por mês e por usuário"),
-                    toolbox_opts=opts.ToolboxOpts(),
-                    xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(rotate=-45)),
-                    yaxis_opts=opts.AxisOpts(name="Quantidade")
+                fig_pizza = px.pie(
+                    publicacoes_por_usuario,
+                    names='Nome',
+                    values='Quantidade',
+                    title="Distribuição de Publicações por Usuário (Intimações)",
+                    hole=0.4,
                 )
 
-                # Exibir o gráfico de barras no Streamlit
-                st_pyecharts(bar, key="echarts_intimacoes")
+                # Gráfico de barras com Pyecharts
+                bar = (
+                    Bar()
+                    .add_xaxis(list(publicacoes_mensais["mes_ano"].unique()))
+                    .add_yaxis(
+                        "Quantidade de Publicações",
+                        publicacoes_mensais.groupby("mes_ano")["quantidade"].sum().tolist()
+                    )
+                    .set_global_opts(
+                        title_opts=opts.TitleOpts(title="Publicações Mensais (Intimações)", subtitle="Total por mês"),
+                        toolbox_opts=opts.ToolboxOpts(),
+                    )
+                )
+
+                # Exibir gráficos lado a lado
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.plotly_chart(fig_pizza, height=500)
+                with col2:
+                    st_pyecharts(bar, key="echarts_intimacoes")
 
     except pymysql.MySQLError as e:
         st.error(f"Erro na conexão com o banco de dados: {e}")
