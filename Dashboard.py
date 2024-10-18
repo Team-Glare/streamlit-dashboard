@@ -36,7 +36,7 @@ def main() -> None:
             database=database,
         )
         
-        names = [
+        nomes = [
             'Natália Franco Massuia e Marcondes',
             'Anamaria Barbosa Ebram Fernandes',
             'Leonardo Tokuda Pereira',
@@ -57,7 +57,7 @@ def main() -> None:
         citacoes = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
         citacoes_dados = pd.DataFrame(citacoes, columns=colunas)
-        citacoes_dados = citacoes_dados[citacoes_dados['name'].isin(names)]
+        citacoes_dados = citacoes_dados[citacoes_dados['Nome'].isin(nomes)]
 
         # Consulta para intimações
         cursor.execute(
@@ -66,7 +66,7 @@ def main() -> None:
         intimacoes = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
         intimacoes_dados = pd.DataFrame(intimacoes, columns=colunas)
-        intimacoes_dados = intimacoes_dados[intimacoes_dados['name'].isin(names)]
+        intimacoes_dados = intimacoes_dados[intimacoes_dados['Nome'].isin(nomes)]
 
         conn.close()
 
@@ -78,14 +78,14 @@ def main() -> None:
 
             if "datapub" in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
-                dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
+                dados["Mês e Ano"] = dados["datapub"].dt.to_period("M").astype(str)
 
                 publicacoes_mensais = (
-                    dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
+                    dados.groupby(["Mês e Ano", "Nome"]).size().reset_index(name="Quantidade")
                 )
 
                 # Gráfico de pizza com Plotly
-                publicacoes_por_usuario = dados['name'].value_counts().reset_index()
+                publicacoes_por_usuario = dados['Nome'].value_counts().reset_index()
                 publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
 
                 fig_pizza = px.pie(
@@ -99,10 +99,10 @@ def main() -> None:
                 # Gráfico de barras com Pyecharts
                 bar = (
                     Bar()
-                    .add_xaxis(list(publicacoes_mensais["mes_ano"].unique()))
+                    .add_xaxis(list(publicacoes_mensais["Mês e Ano"].unique()))
                     .add_yaxis(
                         "Quantidade de Publicações",
-                        publicacoes_mensais.groupby("mes_ano")["quantidade"].sum().tolist()
+                        publicacoes_mensais.groupby("Mês e Ano")["Quantidade"].sum().tolist()
                     )
                     .set_global_opts(
                         title_opts=opts.TitleOpts(title="Publicações Mensais (Citações)", subtitle="Total por mês"),
@@ -120,12 +120,12 @@ def main() -> None:
                 # Gráfico de barras com Plotly
                 fig_barras_plotly = px.bar(
                     publicacoes_mensais,
-                    x="mes_ano",
-                    y="quantidade",
-                    color="name",
+                    x="Mês e Ano",
+                    y="Quantidade",
+                    color="Nome",
                     title="Publicações Mensais por Usuário (Citações)",
                     text_auto=True,
-                    labels={"mes_ano": "Mês e Ano"},  # Alterando o rótulo do eixo X
+                    labels={"Mês e Ano": "Mês e Ano"},  # Alterando o rótulo do eixo X
                 )
 
                 # Exibir gráfico de barras do Plotly
@@ -144,14 +144,14 @@ def main() -> None:
 
             if "datapub" in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
-                dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
+                dados["Mês e Ano"] = dados["datapub"].dt.to_period("M").astype(str)
 
                 publicacoes_mensais = (
-                    dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
+                    dados.groupby(["Mês e Ano", "Nome"]).size().reset_index(name="Quantidade")
                 )
 
                 # Gráfico de pizza com Plotly
-                publicacoes_por_usuario = dados['name'].value_counts().reset_index()
+                publicacoes_por_usuario = dados['Nome'].value_counts().reset_index()
                 publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
 
                 fig_pizza = px.pie(
@@ -165,10 +165,10 @@ def main() -> None:
                 # Gráfico de barras com Pyecharts
                 bar = (
                     Bar()
-                    .add_xaxis(list(publicacoes_mensais["mes_ano"].unique()))
+                    .add_xaxis(list(publicacoes_mensais["Mês e Ano"].unique()))
                     .add_yaxis(
                         "Quantidade de Publicações",
-                        publicacoes_mensais.groupby("mes_ano")["quantidade"].sum().tolist()
+                        publicacoes_mensais.groupby("Mês e Ano")["Quantidade"].sum().tolist()
                     )
                     .set_global_opts(
                         title_opts=opts.TitleOpts(title="Publicações Mensais (Intimações)", subtitle="Total por mês"),
@@ -186,11 +186,11 @@ def main() -> None:
                 # Gráfico de barras com Plotly
                 fig_barras_plotly = px.bar(
                     publicacoes_mensais,
-                    x="mes_ano",
-                    y="quantidade",
-                    color="name",
+                    x="Mês e Ano",
+                    y="Quantidade",
+                    color="Nome",
                     title="Publicações Mensais por Usuário (Intimações)",
-                    labels={"mes_ano": "Mês e Ano"},  # Alterando o rótulo do eixo X
+                    labels={"Mês e Ano": "Mês e Ano"},  # Alterando o rótulo do eixo X
                 )
 
                 # Exibir gráfico de barras do Plotly
