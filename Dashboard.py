@@ -22,7 +22,7 @@ password = os.getenv("DB_PASSWORD") or ""
 database = os.getenv("DB_DATABASE")
 
 def main() -> None:
-    """Start the Streamlit app."""
+    """Inicia o aplicativo Streamlit."""
     try:
         if not host or not user or not database:
             st.error("Faltam informações de conexão com o banco de dados.")
