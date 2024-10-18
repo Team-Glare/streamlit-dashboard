@@ -132,6 +132,7 @@ def main() -> None:
                     text_auto=True,
                 )
 
+                # Exibir gráfico de barras do Plotly
                 st.plotly_chart(fig_barras_plotly, use_container_width=True)
 
         # Exibindo as informações da aba de intimações
@@ -194,7 +195,8 @@ def main() -> None:
                     title="Publicações Mensais por Usuário (Intimações)"
                 )
 
-                st.plotly_chart(fig_barras_plotly, use_container_width=True, )
+                # Exibir gráfico de barras do Plotly
+                st.plotly_chart(fig_barras_plotly, use_container_width=True)
 
     except pymysql.MySQLError as e:
         st.error(f"Erro na conexão com o banco de dados: {e}")
