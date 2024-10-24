@@ -183,7 +183,7 @@ def main() -> None:
                 with col1:
                     st.plotly_chart(fig_pizza, height=500)
                 with col2:
-                    st_pyecharts(bar, key="echarts_intimacoes")
+                    st_pyecharts(bar)
 
                 # Gráfico de barras com Plotly
                 fig_barras_plotly = px.bar(
