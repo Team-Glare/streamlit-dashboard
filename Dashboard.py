@@ -73,19 +73,21 @@ def main() -> None:
         # Filtro de data para citações
         with tabs[0]:
             dados = citacoes_dados
-            st.subheader("Filtro de Data (Citações)")
-            start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='cit_date_input')
-            print(start_date)
+            
+            with st.sidebar:
+                st.subheader("Filtro de Data (Citações)")
+                start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='cit_date_input')
+                print(start_date)
 
             # Verificar se a coluna 'datapub' existe antes de aplicar o filtro
-            with st.sidebar:
-                st.header("Filtro de Data")
-                if 'datapub' in dados.columns:
-                    dados["datapub"] = pd.to_datetime(dados["datapub"])
-                    if start_date and end_date:
-                        dados = dados[(dados['datapub'] >= datetime.datetime(start_date.year,start_date.month,start_date.day)) & (dados['datapub'] <= datetime.datetime(end_date.year,end_date.month,end_date.day))]
-                else:
-                    st.warning("A coluna 'datapub' não foi encontrada nos dados de citações.")
+           
+            st.header("Filtro de Data")
+            if 'datapub' in dados.columns:
+                dados["datapub"] = pd.to_datetime(dados["datapub"])
+                if start_date and end_date:
+                    dados = dados[(dados['datapub'] >= datetime.datetime(start_date.year,start_date.month,start_date.day)) & (dados['datapub'] <= datetime.datetime(end_date.year,end_date.month,end_date.day))]
+            else:
+                st.warning("A coluna 'datapub' não foi encontrada nos dados de citações.")
             
             total_publicacoes = len(dados)
             st.metric(label="Quantidade Total", value=total_publicacoes)
