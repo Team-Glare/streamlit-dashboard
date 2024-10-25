@@ -1,28 +1,7 @@
-import os
-import dotenv
-import pandas as pd
-import plotly.express as px
-import pymysql
-import streamlit as st
-from pyecharts.charts import Bar
-from pyecharts import options as opts
-from streamlit_echarts import st_pyecharts
-
-st.set_page_config(layout="wide")
-
-# Título da página
-st.title("Estatísticas da Procuradoria Trabalhista - PTB :bar_chart:")
-
-dotenv.load_dotenv()
-
-# Informações de conexão com o banco de dados
-host = os.getenv("DB_HOST")
-user = os.getenv("DB_USER")
-password = os.getenv("DB_PASSWORD") or ""
-database = os.getenv("DB_DATABASE")
+# ... código de importação e configuração permanece o mesmo ...
 
 def main() -> None:
-    """Start the Streamlit app."""
+    # Conexão e outras configurações
     try:
         if not host or not user or not database:
             st.error("Faltam informações de conexão com o banco de dados.")
@@ -80,19 +59,26 @@ def main() -> None:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
 
+                # Filtro por mês e ano
+                meses_disponiveis = sorted(dados["mes_ano"].unique())
+                mes_selecionado = st.selectbox("Selecione o Mês/Ano", meses_disponiveis)
+
+                # Filtrar os dados com base no mês selecionado
+                dados_filtrados = dados[dados["mes_ano"] == mes_selecionado]
+
                 publicacoes_mensais = (
-                    dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
+                    dados_filtrados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
                 )
 
                 # Gráfico de pizza com Plotly
-                publicacoes_por_usuario = dados['name'].value_counts().reset_index()
+                publicacoes_por_usuario = dados_filtrados['name'].value_counts().reset_index()
                 publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
 
                 fig_pizza = px.pie(
                     publicacoes_por_usuario,
                     names='Nome',
                     values='Quantidade',
-                    title="Distribuição de Publicações por Usuário (Citações)",
+                    title=f"Distribuição de Publicações por Usuário (Citações - {mes_selecionado})",
                     hole=0.4,
                 )
 
@@ -105,12 +91,11 @@ def main() -> None:
                         publicacoes_mensais.groupby("mes_ano")["quantidade"].sum().tolist()
                     )
                     .set_global_opts(
-                        title_opts=opts.TitleOpts(title="Publicações Mensais (Citações)", subtitle="Total por mês"),
+                        title_opts=opts.TitleOpts(title=f"Publicações Mensais (Citações) - {mes_selecionado}", subtitle="Total por mês"),
                         toolbox_opts=opts.ToolboxOpts(),
                     )
                 )
-                valor = st.slider('Selecione um valor', 0, 100, 50)
-                st.write('O valor selecionado é:', valor)
+                
                 # Exibir gráficos lado a lado
                 col1, col2 = st.columns(2)
                 with col1:
@@ -124,22 +109,19 @@ def main() -> None:
                     x="mes_ano",
                     y="quantidade",
                     color="name",
-                    title="Publicações Mensais por Usuário (Citações)",
+                    title=f"Publicações Mensais por Usuário (Citações - {mes_selecionado})",
                     text_auto=True,
                     labels={"mes_ano": "Mês e Ano",
                             "quantidade": "Quantidade",
-                            "name": "Nome"},  # Alterando o rótulo do eixo X
+                            "name": "Nome"},  
                 )
 
-                # Exibir gráfico de barras do Plotly
-                st.subheader("Gráfico de Barras (Citações)")
+                st.subheader(f"Gráfico de Barras (Citações - {mes_selecionado})")
                 st.plotly_chart(fig_barras_plotly, use_container_width=True)
-
-                # Tabela com o quantitativo mensal
-                st.subheader("Tabela de Quantitativo Mensal (Citações)")
+                st.subheader(f"Tabela de Quantitativo Mensal (Citações - {mes_selecionado})")
                 st.dataframe(publicacoes_mensais)
 
-        # Exibindo as informações da aba de intimações
+        # Repita o mesmo processo para a aba de intimações
         with tabs[1]:
             dados = intimacoes_dados
             total_publicacoes = len(dados)
@@ -149,23 +131,26 @@ def main() -> None:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
 
+                meses_disponiveis = sorted(dados["mes_ano"].unique())
+                mes_selecionado = st.selectbox("Selecione o Mês/Ano", meses_disponiveis, key="intimacoes_mes")
+
+                dados_filtrados = dados[dados["mes_ano"] == mes_selecionado]
+
                 publicacoes_mensais = (
-                    dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
+                    dados_filtrados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
                 )
 
-                # Gráfico de pizza com Plotly
-                publicacoes_por_usuario = dados['name'].value_counts().reset_index()
+                publicacoes_por_usuario = dados_filtrados['name'].value_counts().reset_index()
                 publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
 
                 fig_pizza = px.pie(
                     publicacoes_por_usuario,
                     names='Nome',
                     values='Quantidade',
-                    title="Distribuição de Publicações por Usuário (Intimações)",
+                    title=f"Distribuição de Publicações por Usuário (Intimações - {mes_selecionado})",
                     hole=0.4,
                 )
 
-                # Gráfico de barras com Pyecharts
                 bar = (
                     Bar()
                     .add_xaxis(list(publicacoes_mensais["mes_ano"].unique()))
@@ -174,38 +159,32 @@ def main() -> None:
                         publicacoes_mensais.groupby("mes_ano")["quantidade"].sum().tolist()
                     )
                     .set_global_opts(
-                        title_opts=opts.TitleOpts(title="Publicações Mensais (Intimações)", subtitle="Total por mês"),
+                        title_opts=opts.TitleOpts(title=f"Publicações Mensais (Intimações) - {mes_selecionado}", subtitle="Total por mês"),
                         toolbox_opts=opts.ToolboxOpts(),
                     )
                 )
 
-                # Exibir gráficos lado a lado
                 col1, col2 = st.columns(2)
                 with col1:
                     st.plotly_chart(fig_pizza, height=500)
                 with col2:
                     st_pyecharts(bar)
 
-                # Gráfico de barras com Plotly
                 fig_barras_plotly = px.bar(
                     publicacoes_mensais,
                     x="mes_ano",
                     y="quantidade",
                     color="name",
-                    title="Publicações Mensais por Usuário (Intimações)",
+                    title=f"Publicações Mensais por Usuário (Intimações - {mes_selecionado})",
                     text_auto=True,
                     labels={"mes_ano": "Mês e Ano",
                             "quantidade": "Quantidade",
-                            "name": "Nome"},  # Alterando o rótulo do eixo X
+                            "name": "Nome"}, 
                 )
-                
 
-                # Exibir gráfico de barras do Plotly
-                st.subheader("Gráfico de Barras (Intimações)")
+                st.subheader(f"Gráfico de Barras (Intimações - {mes_selecionado})")
                 st.plotly_chart(fig_barras_plotly, use_container_width=True)
-
-                # Tabela com o quantitativo mensal
-                st.subheader("Tabela de Quantitativo Mensal (Intimações)")
+                st.subheader(f"Tabela de Quantitativo Mensal (Intimações - {mes_selecionado})")
                 st.dataframe(publicacoes_mensais)
 
     except pymysql.MySQLError as e:
