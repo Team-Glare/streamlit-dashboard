@@ -74,6 +74,7 @@ def main() -> None:
             dados = citacoes_dados
             st.subheader("Filtro de Data (Citações)")
             start_date, end_date = st.date_input("Selecione o intervalo de datas:", [])
+            print(start_date)
 
             # Verificar se a coluna 'datadisp' existe antes de aplicar o filtro
             if 'datadisp' in dados.columns:
