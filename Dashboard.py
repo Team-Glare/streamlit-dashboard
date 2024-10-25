@@ -70,19 +70,22 @@ def main() -> None:
 
         conn.close()
 
-        # Configurações para a aba de Citações
+        # Filtro de data para citações
         with tabs[0]:
             dados = citacoes_dados
             
             with st.sidebar:
                 st.subheader("Filtro de Data (Citações)")
                 start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='cit_date_input')
+                print(start_date)
 
             # Verificar se a coluna 'datapub' existe antes de aplicar o filtro
+           
+            st.header("Filtro de Data")
             if 'datapub' in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 if start_date and end_date:
-                    dados = dados[(dados['datapub'] >= start_date) & (dados['datapub'] <= end_date)]
+                    dados = dados[(dados['datapub'] >= datetime.datetime(start_date.year,start_date.month,start_date.day)) & (dados['datapub'] <= datetime.datetime(end_date.year,end_date.month,end_date.day))]
             else:
                 st.warning("A coluna 'datapub' não foi encontrada nos dados de citações.")
             
@@ -142,13 +145,14 @@ def main() -> None:
                 st.subheader("Tabela de Quantitativo Mensal (Citações)")
                 st.dataframe(publicacoes_mensais)
 
-        # Configurações para a aba de Intimações
+        # Filtro de data para intimações
         with tabs[1]:
             dados = intimacoes_dados
             
             with st.sidebar:
                 st.subheader("Filtro de Data (Intimações)")
                 start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='int_date_input')
+                print(start_date)
 
             if 'datapub' in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
@@ -196,7 +200,7 @@ def main() -> None:
                 with col1:
                     st.plotly_chart(fig_pizza, height=500)
                 with col2:
-                    st_pyecharts(bar, key="echarts_intimacoes")
+                    st_pyecharts(bar)
 
                 fig_barras_plotly = px.bar(
                     publicacoes_mensais,
