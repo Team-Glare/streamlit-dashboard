@@ -77,12 +77,15 @@ def main() -> None:
             with st.sidebar:
                 st.subheader("Filtro de Data (Citações)")
                 start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='cit_date_input')
-                print("Datas selecionadas (Citações):", start_date, end_date)
+                print(start_date)
 
+            # Verificar se a coluna 'datapub' existe antes de aplicar o filtro
+           
+            st.header("Filtro de Data")
             if 'datapub' in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 if start_date and end_date:
-                    dados = dados[(dados['datapub'] >= start_date) & (dados['datapub'] <= end_date)]
+                    dados = dados[(dados['datapub'] >= datetime.datetime(start_date.year,start_date.month,start_date.day)) & (dados['datapub'] <= datetime.datetime(end_date.year,end_date.month,end_date.day))]
             else:
                 st.warning("A coluna 'datapub' não foi encontrada nos dados de citações.")
             
@@ -145,18 +148,16 @@ def main() -> None:
         # Filtro de data para intimações
         with tabs[1]:
             dados = intimacoes_dados
-            st.write("Dados de intimações:", dados)  # Log de dados de intimações
             
             with st.sidebar:
                 st.subheader("Filtro de Data (Intimações)")
                 start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='int_date_input')
-                st.write("Datas selecionadas (Intimações):", start_date, end_date)  # Log de datas
+                print(start_date)
 
             if 'datapub' in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 if start_date and end_date:
                     dados = dados[(dados['datapub'] >= start_date) & (dados['datapub'] <= end_date)]
-                    st.write("Dados após filtro (Intimações):", dados)  # Log de dados filtrados
             else:
                 st.warning("A coluna 'datapub' não foi encontrada nos dados de intimações.")
             
