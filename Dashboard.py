@@ -87,8 +87,8 @@ def main() -> None:
                 else:
                     st.warning("A coluna 'datapub' não foi encontrada nos dados de citações.")
             
-            total_publicacoes = len(dados)
-            st.metric(label="Quantidade Total", value=total_publicacoes)
+                total_publicacoes = len(dados)
+                st.metric(label="Quantidade Total", value=total_publicacoes)
 
             if "datapub" in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
