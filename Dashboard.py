@@ -78,12 +78,14 @@ def main() -> None:
             print(start_date)
 
             # Verificar se a coluna 'datapub' existe antes de aplicar o filtro
-            if 'datapub' in dados.columns:
-                dados["datapub"] = pd.to_datetime(dados["datapub"])
-                if start_date and end_date:
-                    dados = dados[(dados['datapub'] >= datetime.datetime(start_date.year,start_date.month,start_date.day)) & (dados['datapub'] <= datetime.datetime(end_date.year,end_date.month,end_date.day))]
-            else:
-                st.warning("A coluna 'datapub' não foi encontrada nos dados de citações.")
+            with st.sidebar:
+                st.header("Filtro de Data")
+                if 'datapub' in dados.columns:
+                    dados["datapub"] = pd.to_datetime(dados["datapub"])
+                    if start_date and end_date:
+                        dados = dados[(dados['datapub'] >= datetime.datetime(start_date.year,start_date.month,start_date.day)) & (dados['datapub'] <= datetime.datetime(end_date.year,end_date.month,end_date.day))]
+                else:
+                    st.warning("A coluna 'datapub' não foi encontrada nos dados de citações.")
             
             total_publicacoes = len(dados)
             st.metric(label="Quantidade Total", value=total_publicacoes)
