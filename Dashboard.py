@@ -87,16 +87,16 @@ def main() -> None:
                 else:
                     st.warning("A coluna 'datapub' não foi encontrada nos dados de citações.")
             
-                total_publicacoes = len(dados)
-                st.metric(label="Quantidade Total", value=total_publicacoes)
+            total_publicacoes = len(dados)
+            st.metric(label="Quantidade Total", value=total_publicacoes)
 
-                if "datapub" in dados.columns:
-                    dados["datapub"] = pd.to_datetime(dados["datapub"])
-                    dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
+            if "datapub" in dados.columns:
+                dados["datapub"] = pd.to_datetime(dados["datapub"])
+                dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
 
-                    publicacoes_mensais = (
-                        dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
-                    )
+                publicacoes_mensais = (
+                    dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
+                )
 
                 publicacoes_por_usuario = dados['name'].value_counts().reset_index()
                 publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
