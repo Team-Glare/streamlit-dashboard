@@ -109,7 +109,8 @@ def main() -> None:
                         toolbox_opts=opts.ToolboxOpts(),
                     )
                 )
-
+                valor = st.slider('Selecione um valor', 0, 100, 50)
+                st.write('O valor selecionado é:', valor)
                 # Exibir gráficos lado a lado
                 col1, col2 = st.columns(2)
                 with col1:
