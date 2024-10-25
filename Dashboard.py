@@ -22,7 +22,6 @@ password = os.getenv("DB_PASSWORD") or ""
 database = os.getenv("DB_DATABASE")
 
 def main() -> None:
-    """Start the Streamlit app."""
     try:
         if not host or not user or not database:
             st.error("Faltam informações de conexão com o banco de dados.")
@@ -76,8 +75,13 @@ def main() -> None:
             st.subheader("Filtro de Data (Citações)")
             start_date, end_date = st.date_input("Selecione o intervalo de datas:", [])
 
-            if start_date and end_date:
-                dados = dados[(dados['datadisp'] >= start_date) & (dados['datadisp'] <= end_date)]
+            # Verificar se a coluna 'datadisp' existe antes de aplicar o filtro
+            if 'datadisp' in dados.columns:
+                dados["datadisp"] = pd.to_datetime(dados["datadisp"])
+                if start_date and end_date:
+                    dados = dados[(dados['datadisp'] >= start_date) & (dados['datadisp'] <= end_date)]
+            else:
+                st.warning("A coluna 'datadisp' não foi encontrada nos dados de citações.")
             
             total_publicacoes = len(dados)
             st.metric(label="Quantidade Total", value=total_publicacoes)
@@ -90,7 +94,6 @@ def main() -> None:
                     dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
                 )
 
-                # Gráfico de pizza com Plotly
                 publicacoes_por_usuario = dados['name'].value_counts().reset_index()
                 publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
 
@@ -102,7 +105,6 @@ def main() -> None:
                     hole=0.4,
                 )
 
-                # Gráfico de barras com Pyecharts
                 bar = (
                     Bar()
                     .add_xaxis(list(publicacoes_mensais["mes_ano"].unique()))
@@ -116,14 +118,12 @@ def main() -> None:
                     )
                 )
                 
-                # Exibir gráficos lado a lado
                 col1, col2 = st.columns(2)
                 with col1:
                     st.plotly_chart(fig_pizza, height=500)
                 with col2:
                     st_pyecharts(bar, key="echarts_citacoes")
 
-                # Gráfico de barras com Plotly
                 fig_barras_plotly = px.bar(
                     publicacoes_mensais,
                     x="mes_ano",
@@ -131,14 +131,11 @@ def main() -> None:
                     color="name",
                     title="Publicações Mensais por Usuário (Citações)",
                     text_auto=True,
-                    labels={"mes_ano": "Mês e Ano",
-                            "quantidade": "Quantidade",
-                            "name": "Nome"},
+                    labels={"mes_ano": "Mês e Ano", "quantidade": "Quantidade", "name": "Nome"},
                 )
 
                 st.subheader("Gráfico de Barras (Citações)")
                 st.plotly_chart(fig_barras_plotly, use_container_width=True)
-
                 st.subheader("Tabela de Quantitativo Mensal (Citações)")
                 st.dataframe(publicacoes_mensais)
 
@@ -148,9 +145,13 @@ def main() -> None:
             st.subheader("Filtro de Data (Intimações)")
             start_date, end_date = st.date_input("Selecione o intervalo de datas:", [])
 
-            if start_date and end_date:
-                dados = dados[(dados['datadisp'] >= start_date) & (dados['datadisp'] <= end_date)]
-
+            if 'datadisp' in dados.columns:
+                dados["datadisp"] = pd.to_datetime(dados["datadisp"])
+                if start_date and end_date:
+                    dados = dados[(dados['datadisp'] >= start_date) & (dados['datadisp'] <= end_date)]
+            else:
+                st.warning("A coluna 'datadisp' não foi encontrada nos dados de intimações.")
+            
             total_publicacoes = len(dados)
             st.metric(label="Quantidade Total", value=total_publicacoes)
 
@@ -199,14 +200,11 @@ def main() -> None:
                     color="name",
                     title="Publicações Mensais por Usuário (Intimações)",
                     text_auto=True,
-                    labels={"mes_ano": "Mês e Ano",
-                            "quantidade": "Quantidade",
-                            "name": "Nome"},
+                    labels={"mes_ano": "Mês e Ano", "quantidade": "Quantidade", "name": "Nome"},
                 )
 
                 st.subheader("Gráfico de Barras (Intimações)")
                 st.plotly_chart(fig_barras_plotly, use_container_width=True)
-
                 st.subheader("Tabela de Quantitativo Mensal (Intimações)")
                 st.dataframe(publicacoes_mensais)
 
