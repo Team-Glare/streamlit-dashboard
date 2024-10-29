@@ -25,7 +25,7 @@ database = os.getenv("DB_DATABASE")
 def main() -> None:
     try:
         if not host or not user or not database:
-            st.error("Erro! Faltam informações de conexão com o banco de dados.")
+            st.error("Faltam informações de conexão com o banco de dados.")
             return
 
         conn = pymysql.connect(
