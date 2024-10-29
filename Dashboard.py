@@ -79,22 +79,22 @@ def main() -> None:
                 start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='cit_date_input')
                 print(start_date)
 
-            # Verificar se a coluna 'datadisp' existe antes de aplicar o filtro
+            # Verificar se a coluna 'datapub' existe antes de aplicar o filtro
            
             st.header("Filtro de Data")
-            if 'datadisp' in dados.columns:
-                dados["datadisp"] = pd.to_datetime(dados["datadisp"])
+            if 'datapub' in dados.columns:
+                dados["datapub"] = pd.to_datetime(dados["datapub"])
                 if start_date and end_date:
-                    dados = dados[(dados['datadisp'] >= datetime.datetime(start_date.year,start_date.month,start_date.day)) & (dados['datadisp'] <= datetime.datetime(end_date.year,end_date.month,end_date.day))]
+                    dados = dados[(dados['datapub'] >= datetime.datetime(start_date.year,start_date.month,start_date.day)) & (dados['datapub'] <= datetime.datetime(end_date.year,end_date.month,end_date.day))]
             else:
-                st.warning("A coluna 'datadisp' não foi encontrada nos dados de citações.")
+                st.warning("A coluna 'datapub' não foi encontrada nos dados de citações.")
             
             total_publicacoes = len(dados)
             st.metric(label="Quantidade Total", value=total_publicacoes)
 
-            if "datadisp" in dados.columns:
-                dados["datadisp"] = pd.to_datetime(dados["datadisp"])
-                dados["mes_ano"] = dados["datadisp"].dt.to_period("M").astype(str)
+            if "datapub" in dados.columns:
+                dados["datapub"] = pd.to_datetime(dados["datapub"])
+                dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
 
                 publicacoes_mensais = (
                     dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
@@ -154,19 +154,19 @@ def main() -> None:
                 start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='int_date_input')
                 print(start_date)
 
-            if 'datadisp' in dados.columns:
-                dados["datadisp"] = pd.to_datetime(dados["datadisp"])
+            if 'datapub' in dados.columns:
+                dados["datapub"] = pd.to_datetime(dados["datapub"])
                 if start_date and end_date:
-                    dados = dados[(dados['datadisp'] >= start_date) & (dados['datadisp'] <= end_date)]
+                    dados = dados[(dados['datapub'] >= start_date) & (dados['datapub'] <= end_date)]
             else:
-                st.warning("A coluna 'datadisp' não foi encontrada nos dados de intimações.")
+                st.warning("A coluna 'datapub' não foi encontrada nos dados de intimações.")
             
             total_publicacoes = len(dados)
             st.metric(label="Quantidade Total", value=total_publicacoes)
 
-            if "datadisp" in dados.columns:
-                dados["datadisp"] = pd.to_datetime(dados["datadisp"])
-                dados["mes_ano"] = dados["datadisp"].dt.to_period("M").astype(str)
+            if "datapub" in dados.columns:
+                dados["datapub"] = pd.to_datetime(dados["datapub"])
+                dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
 
                 publicacoes_mensais = (
                     dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
