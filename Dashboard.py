@@ -81,7 +81,7 @@ def main() -> None:
 
             # Verificar se a coluna 'datapub' existe antes de aplicar o filtro
            
-            st.header("Filtro de Data teste")
+            st.header("Filtro de Data")
             if 'datapub' in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 if start_date and end_date:
