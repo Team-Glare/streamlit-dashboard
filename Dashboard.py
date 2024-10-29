@@ -35,7 +35,7 @@ def main() -> None:
             password=password,
             database=database,
         )
-        
+
         names = [
             'Natália Franco Massuia e Marcondes',
             'Anamaria Barbosa Ebram Fernandes',
@@ -45,11 +45,11 @@ def main() -> None:
             'Pedro Carvalho Mitre Chaves',
             'Kelly Cristina Majima'
         ]
-        
+
         tabs = st.tabs(["Citações", "Intimações"])
-        
+
         cursor = conn.cursor()
-        
+
         # Consulta para citações
         cursor.execute(
             "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PTB' AND natureza LIKE 'cit%' COLLATE utf8mb4_unicode_ci",
@@ -73,7 +73,7 @@ def main() -> None:
         # Filtro de data para citações
         with tabs[0]:
             dados = citacoes_dados
-            
+
             with st.sidebar:
                 st.subheader("Filtro de Data (Citações)")
                 start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='cit_date_input')
@@ -88,7 +88,7 @@ def main() -> None:
                     dados = dados[(dados['datapub'] >= datetime.datetime(start_date.year,start_date.month,start_date.day)) & (dados['datapub'] <= datetime.datetime(end_date.year,end_date.month,end_date.day))]
             else:
                 st.warning("A coluna 'datapub' não foi encontrada nos dados de citações.")
-            
+
             total_publicacoes = len(dados)
             st.metric(label="Quantidade Total", value=total_publicacoes)
 
@@ -123,7 +123,7 @@ def main() -> None:
                         toolbox_opts=opts.ToolboxOpts(),
                     )
                 )
-                
+
                 col1, col2 = st.columns(2)
                 with col1:
                     st.plotly_chart(fig_pizza, height=500)
@@ -148,19 +148,20 @@ def main() -> None:
         # Filtro de data para intimações
         with tabs[1]:
             dados = intimacoes_dados
-            
+
             with st.sidebar:
                 st.subheader("Filtro de Data (Intimações)")
                 start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='int_date_input')
                 print(start_date)
 
+    
             if 'datapub' in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 if start_date and end_date:
                     dados = dados[(dados['datapub'] >= start_date) & (dados['datapub'] <= end_date)]
             else:
                 st.warning("A coluna 'datapub' não foi encontrada nos dados de intimações.")
-            
+
             total_publicacoes = len(dados)
             st.metric(label="Quantidade Total", value=total_publicacoes)
 
