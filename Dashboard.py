@@ -78,6 +78,8 @@ def main() -> None:
                 st.subheader("Filtro de Data (Citações)")
                 start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='cit_date_input')
                 print(start_date)
+                st.subheader("Filtro de Nome")
+                selected_names = st.multiselect("Selecione o(s) nome(s):", options=names, default=names)
                 
             # Verificar se a coluna 'datapub' existe antes de aplicar o filtro
            
