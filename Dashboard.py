@@ -74,10 +74,7 @@ def main() -> None:
         with tabs[0]:
             dados = citacoes_dados
             
-            with st.sidebar:
-                st.subheader("Filtro de Data (Citações)")
-                start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='cit_date_input')
-                print(start_date)
+            
 
             # Verificar se a coluna 'datapub' existe antes de aplicar o filtro
            
@@ -221,6 +218,11 @@ def main() -> None:
         with tabs[1]:
             dados = intimacoes_dados
             
+            with st.sidebar:
+                st.subheader("Filtro de Data (Intimações)")
+                start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='int_date_input')
+                print(start_date)
+
             if 'datapub' in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 if start_date and end_date:
