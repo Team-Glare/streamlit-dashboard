@@ -156,7 +156,8 @@ def main() -> None:
             
             with st.sidebar:
                 st.subheader("Filtro de Data (Intimações)")
-                start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15), datetime.datetime.today()], key='int_date_input')
+                start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='int_date_input')
+                print(start_date)
                 st.subheader("Filtro de Nome")
                 selected_names = st.multiselect("Selecione o(s) nome(s):", options=names, default=names)
                   
