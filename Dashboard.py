@@ -78,32 +78,7 @@ def main() -> None:
                 st.subheader("Filtro de Data (Citações)")
                 start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='cit_date_input')
                 print(start_date)
-                with st.sidebar:
-                    st.subheader("Filtro de Data (Citações)")
-                    start_date, end_date = st.date_input("Selecione o intervalo de datas:", 
-                                         [datetime.datetime(2024,5,15), datetime.datetime.today()], 
-                                         key='cit_date_input')
-                    st.subheader("Filtro de Nome")
-                    selected_names = st.multiselect("Selecione o(s) nome(s):", 
-                                    options=[
-                                        'Natália Franco Massuia e Marcondes',
-                                        'Anamaria Barbosa Ebram Fernandes',
-                                        'Leonardo Tokuda Pereira',
-                                        'Leonardo Warmling Candido da Silva',
-                                        'Marcelo Moura da Silva',
-                                        'Pedro Carvalho Mitre Chaves',
-                                        'Kelly Cristina Majima'
-                                    ], 
-                                    default=[
-                                        'Natália Franco Massuia e Marcondes',
-                                        'Anamaria Barbosa Ebram Fernandes',
-                                        'Leonardo Tokuda Pereira',
-                                        'Leonardo Warmling Candido da Silva',
-                                        'Marcelo Moura da Silva',
-                                        'Pedro Carvalho Mitre Chaves',
-                                        'Kelly Cristina Majima'
-                                    ])
-
+                
 
             # Verificar se a coluna 'datapub' existe antes de aplicar o filtro
            
