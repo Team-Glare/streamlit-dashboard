@@ -74,7 +74,10 @@ def main() -> None:
         with tabs[0]:
             dados = citacoes_dados
             
-            
+            with st.sidebar:
+                st.subheader("Filtro de Data (Citações)")
+                start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='cit_date_input')
+                print(start_date)
 
             # Verificar se a coluna 'datapub' existe antes de aplicar o filtro
            
