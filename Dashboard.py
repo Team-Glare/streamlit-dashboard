@@ -157,7 +157,7 @@ def main() -> None:
             if 'datapub' in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 if start_date and end_date:
-                    dados = dados[(dados['datapub'] >= start_date) & (dados['datapub'] <= end_date)]
+                    dados = dados[(dados['datapub'] >= datetime.datetime(start_date.year,start_date.month,start_date.day)) & (dados['datapub'] <= datetime.datetime(end_date.year,end_date.month,end_date.day))]
             else:
                 st.warning("A coluna 'datapub' não foi encontrada nos dados de intimações.")
             
