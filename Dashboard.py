@@ -78,6 +78,8 @@ def main() -> None:
                 st.subheader("Filtro de Data (Citações)")
                 start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='cit_date_input')
                 print(start_date)
+                st.subheader("Filtro de Nome")
+                selected_names = st.multiselect("Selecione o(s) nome(s):", options=names, default=names)
 
             # Verificar se a coluna 'datapub' existe antes de aplicar o filtro
            
@@ -85,12 +87,15 @@ def main() -> None:
             if 'datapub' in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 if start_date and end_date:
-                    dados = dados[(dados['datapub'] >= datetime.datetime(start_date.year,start_date.month,start_date.day)) & (dados['datapub'] <= datetime.datetime(end_date.year,end_date.month,end_date.day))]
+                    dados = dados[(dados['datapub'] >= start_date) & (dados['datapub'] <= end_date)]
+                if selected_names:
+                    dados = dados[dados['name'].isin(selected_names)]
             else:
                 st.warning("A coluna 'datapub' não foi encontrada nos dados de citações.")
             
             total_publicacoes = len(dados)
             st.metric(label="Quantidade Total", value=total_publicacoes)
+            
 
             if "datapub" in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
@@ -151,13 +156,17 @@ def main() -> None:
             
             with st.sidebar:
                 st.subheader("Filtro de Data (Intimações)")
-                start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='int_date_input')
-                print(start_date)
+                start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15), datetime.datetime.today()], key='int_date_input')
+                st.subheader("Filtro de Nome")
+                selected_names = st.multiselect("Selecione o(s) nome(s):", options=names, default=names)
+                  
 
             if 'datapub' in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 if start_date and end_date:
-                    dados = dados[(dados['datapub'] >= datetime.datetime(start_date.year,start_date.month,start_date.day)) & (dados['datapub'] <= datetime.datetime(end_date.year,end_date.month,end_date.day))]
+                    dados = dados[(dados['datapub'] >= start_date) & (dados['datapub'] <= end_date)]
+                if selected_names:
+                    dados = dados[dados['name'].isin(selected_names)]
             else:
                 st.warning("A coluna 'datapub' não foi encontrada nos dados de intimações.")
             
