@@ -37,10 +37,10 @@ def main() -> None:
         )
         
         # Consulta para obter os assuntos cadastrados
-        cursor = conn.cursor()
-        cursor.execute("SELECT nome_assunto FROM assunto_especifico")
-        assuntos = cursor.fetchall()
-        assunto_options = [assunto[0] for assunto in assuntos]
+        query = "SELECT nome_assunto FROM assunto_especificos"
+        cursor.execute(query)
+        assuntos = [row[0] for row in cursor.fetchall()]
+        
 
         names = [
             'Natália Franco Massuia e Marcondes',
@@ -56,9 +56,9 @@ def main() -> None:
         
         # Sidebar: Selectbox para seleção de assuntos
         with st.sidebar:
-            st.subheader("Selecionar Assunto")
-            selected_assunto = st.selectbox("Assunto Específico:", assunto_options)
-            st.write("Assunto selecionado:", selected_assunto)
+         st.subheader("Selecione o Assunto")
+         selected_assunto = st.selectbox("Escolha um assunto:", assuntos)
+         st.write("Assunto selecionado:", selected_assunto)
         
         # Consulta para citações
         cursor.execute(
