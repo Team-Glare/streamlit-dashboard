@@ -71,40 +71,45 @@ def main() -> None:
         conn.close()
 
         # Filtro de data para citações
+        # Dentro da aba "Citações"
         with tabs[0]:
             dados = citacoes_dados
             
             with st.sidebar:
                 st.subheader("Filtro de Data (Citações)")
-                start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='cit_date_input')
-                print(start_date)
+                start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15), datetime.datetime.today()], key='cit_date_input')
+                
                 st.subheader("Filtro de Nome")
                 selected_names = st.multiselect("Selecione o(s) nome(s):", options=names, default=names)
-                
-            # Verificar se a coluna 'datapub' existe antes de aplicar o filtro
-           
-            st.header("Filtro de Data")
+            
+            # Aplicar o filtro de data
             if 'datapub' in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 if start_date and end_date:
-                    dados = dados[(dados['datapub'] >= datetime.datetime(start_date.year,start_date.month,start_date.day)) & (dados['datapub'] <= datetime.datetime(end_date.year,end_date.month,end_date.day))]
+                    dados = dados[(dados['datapub'] >= datetime.datetime(start_date.year, start_date.month, start_date.day)) &
+                                (dados['datapub'] <= datetime.datetime(end_date.year, end_date.month, end_date.day))]
             else:
                 st.warning("A coluna 'datapub' não foi encontrada nos dados de citações.")
             
+            # Aplicar o filtro de nome
+            if selected_names:
+                dados = dados[dados['name'].isin(selected_names)]
+            
+            # Continue com os cálculos e gráficos como antes
             total_publicacoes = len(dados)
             st.metric(label="Quantidade Total", value=total_publicacoes)
 
+            # Gráficos e tabelas com dados filtrados por nome e data
             if "datapub" in dados.columns:
-                dados["datapub"] = pd.to_datetime(dados["datapub"])
                 dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
-
+                
                 publicacoes_mensais = (
                     dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
                 )
-
+                
                 publicacoes_por_usuario = dados['name'].value_counts().reset_index()
                 publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
-
+                
                 fig_pizza = px.pie(
                     publicacoes_por_usuario,
                     names='Nome',
@@ -125,7 +130,7 @@ def main() -> None:
                         toolbox_opts=opts.ToolboxOpts(),
                     )
                 )
-                
+
                 col1, col2 = st.columns(2)
                 with col1:
                     st.plotly_chart(fig_pizza, height=500)
@@ -146,6 +151,7 @@ def main() -> None:
                 st.plotly_chart(fig_barras_plotly, use_container_width=True)
                 st.subheader("Tabela de Quantitativo Mensal (Citações)")
                 st.dataframe(publicacoes_mensais)
+
 
         # Filtro de data para intimações
         with tabs[1]:
