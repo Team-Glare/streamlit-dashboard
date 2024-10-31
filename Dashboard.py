@@ -77,6 +77,7 @@ def main() -> None:
         conn.close()
 
         # Filtro de data para citações
+        # Dentro da aba "Citações"
         with tabs[0]:
             dados = citacoes_dados
 
@@ -90,11 +91,16 @@ def main() -> None:
                     ],
                     key="cit_date_input",
                 )
-                print(start_date)
 
-            # Verificar se a coluna 'datapub' existe antes de aplicar o filtro
+                st.subheader("Filtro de Nome (Citações)")
+                selected_names = st.multiselect(
+                    "Selecione o(s) nome(s):",
+                    options=names,
+                    default=names,
+                    key="cit_multiselect",
+                )
 
-            st.header("Filtro de Data")
+            # Aplicar o filtro de data
             if "datapub" in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 if start_date and end_date:
@@ -119,11 +125,16 @@ def main() -> None:
                     "A coluna 'datapub' não foi encontrada nos dados de citações."
                 )
 
+            # Aplicar o filtro de nome
+            if selected_names:
+                dados = dados[dados["name"].isin(selected_names)]
+
+            # Continue com os cálculos e gráficos como antes
             total_publicacoes = len(dados)
             st.metric(label="Quantidade Total", value=total_publicacoes)
 
+            # Gráficos e tabelas com dados filtrados por nome e data
             if "datapub" in dados.columns:
-                dados["datapub"] = pd.to_datetime(dados["datapub"])
                 dados["mes_ano"] = (
                     dados["datapub"].dt.to_period("M").astype(str)
                 )
@@ -206,6 +217,14 @@ def main() -> None:
                 )
                 print(start_date)
 
+                st.subheader("Filtro de Nome (Intimações)")
+                selected_names = st.multiselect(
+                    "Selecione o(s) nome(s):",
+                    options=names,
+                    default=names,
+                    key="int_multiselect",
+                )
+
             if "datapub" in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 if start_date and end_date:
@@ -229,6 +248,9 @@ def main() -> None:
                 st.warning(
                     "A coluna 'datapub' não foi encontrada nos dados de intimações."
                 )
+
+            if selected_names:
+                dados = dados[dados["name"].isin(selected_names)]
 
             total_publicacoes = len(dados)
             st.metric(label="Quantidade Total", value=total_publicacoes)
@@ -280,7 +302,7 @@ def main() -> None:
                 with col1:
                     st.plotly_chart(fig_pizza, height=500)
                 with col2:
-                    st_pyecharts(bar, key="echarts_intimacoes")
+                    st_pyecharts(bar, key="echarts_intimacao")
 
                 fig_barras_plotly = px.bar(
                     publicacoes_mensais,
