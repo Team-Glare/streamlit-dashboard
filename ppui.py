@@ -13,13 +13,13 @@ st.set_page_config(layout="wide")
 # Título da página
 st.title("Estatística da procuradoria de Patrimonio Urbanístico e imobiliário - PPUI - 2024 :bar_chart:")
 
-'''dotenv.load_dotenv()
+# dotenv.load_dotenv()
 
 # Informações de conexão com o banco de dados
-host = os.getenv("DB_HOST")
-user = os.getenv("DB_USER")
-password = os.getenv("DB_PASSWORD") or ""
-database = os.getenv("DB_DATABASE")'''
+# host = os.getenv("DB_HOST")
+# user = os.getenv("DB_USER")
+# password = os.getenv("DB_PASSWORD") or ""
+# database = os.getenv("DB_DATABASE")
 
 # Informações de conexão com o banco de dados
 host = "193.203.175.53"
