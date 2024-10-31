@@ -14,7 +14,7 @@ from streamlit_echarts import st_pyecharts
 st.set_page_config(layout="wide")
 
 # Título da página
-st.title("Estatística da procuradoria Licitações e Contratos - PLC - 2024 :bar_chart:")
+st.title("ESTATÍSTICA DA PROCURADORIA DE PATRIMONIO URBANÍSTICO E IMOBILIÁRIO - PPUI - PUBLICAÇÕES - 2024  :bar_chart:")
 
 # dotenv.load_dotenv()
 
@@ -58,7 +58,7 @@ def main() -> None:
 
         # Executar a consulta SQL
         cursor.execute(
-            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PLC'",
+            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PPUI'",
         )
         resultados = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
