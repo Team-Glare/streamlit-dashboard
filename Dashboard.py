@@ -36,6 +36,12 @@ def main() -> None:
             database=database,
         )
         
+        # Consulta para obter os assuntos cadastrados
+        cursor = conn.cursor()
+        cursor.execute("SELECT nome_assunto FROM assunto_especifico")
+        assuntos = cursor.fetchall()
+        assunto_options = [assunto[0] for assunto in assuntos]
+
         names = [
             'Natália Franco Massuia e Marcondes',
             'Anamaria Barbosa Ebram Fernandes',
@@ -48,7 +54,11 @@ def main() -> None:
         
         tabs = st.tabs(["Citações", "Intimações"])
         
-        cursor = conn.cursor()
+        # Sidebar: Selectbox para seleção de assuntos
+        with st.sidebar:
+            st.subheader("Selecionar Assunto")
+            selected_assunto = st.selectbox("Assunto Específico:", assunto_options)
+            st.write("Assunto selecionado:", selected_assunto)
         
         # Consulta para citações
         cursor.execute(
@@ -71,7 +81,6 @@ def main() -> None:
         conn.close()
 
         # Filtro de data para citações
-        # Dentro da aba "Citações"
         with tabs[0]:
             dados = citacoes_dados
             
@@ -82,30 +91,24 @@ def main() -> None:
                 st.subheader("Filtro de Nome (Citações)")
                 selected_names = st.multiselect("Selecione o(s) nome(s):", options=names, default=names, key='cit_multiselect')
             
-            # Aplicar o filtro de data
             if 'datapub' in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 if start_date and end_date:
                     dados = dados[(dados['datapub'] >= datetime.datetime(start_date.year, start_date.month, start_date.day)) &
-                                (dados['datapub'] <= datetime.datetime(end_date.year, end_date.month, end_date.day))]
+                                  (dados['datapub'] <= datetime.datetime(end_date.year, end_date.month, end_date.day))]
             else:
                 st.warning("A coluna 'datapub' não foi encontrada nos dados de citações.")
             
-            # Aplicar o filtro de nome
             if selected_names:
                 dados = dados[dados['name'].isin(selected_names)]
             
-            # Continue com os cálculos e gráficos como antes
             total_publicacoes = len(dados)
             st.metric(label="Quantidade Total", value=total_publicacoes)
 
-            # Gráficos e tabelas com dados filtrados por nome e data
             if "datapub" in dados.columns:
                 dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
                 
-                publicacoes_mensais = (
-                    dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
-                )
+                publicacoes_mensais = dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
                 
                 publicacoes_por_usuario = dados['name'].value_counts().reset_index()
                 publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
@@ -159,8 +162,7 @@ def main() -> None:
             
             with st.sidebar:
                 st.subheader("Filtro de Data (Intimações)")
-                start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15),datetime.datetime.today()], key='int_date_input')
-                print(start_date)
+                start_date, end_date = st.date_input("Selecione o intervalo de datas:", [datetime.datetime(2024,5,15), datetime.datetime.today()], key='int_date_input')
                 
                 st.subheader("Filtro de Nome (Intimações)")
                 selected_names = st.multiselect("Selecione o(s) nome(s):", options=names, default=names, key='int_multiselect')
@@ -168,7 +170,8 @@ def main() -> None:
             if 'datapub' in dados.columns:
                 dados["datapub"] = pd.to_datetime(dados["datapub"])
                 if start_date and end_date:
-                    dados = dados[(dados['datapub'] >= datetime.datetime(start_date.year,start_date.month,start_date.day)) & (dados['datapub'] <= datetime.datetime(end_date.year,end_date.month,end_date.day))]
+                    dados = dados[(dados['datapub'] >= datetime.datetime(start_date.year, start_date.month, start_date.day)) &
+                                  (dados['datapub'] <= datetime.datetime(end_date.year, end_date.month, end_date.day))]
             else:
                 st.warning("A coluna 'datapub' não foi encontrada nos dados de intimações.")
                 
@@ -179,12 +182,9 @@ def main() -> None:
             st.metric(label="Quantidade Total", value=total_publicacoes)
 
             if "datapub" in dados.columns:
-                dados["datapub"] = pd.to_datetime(dados["datapub"])
                 dados["mes_ano"] = dados["datapub"].dt.to_period("M").astype(str)
 
-                publicacoes_mensais = (
-                    dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
-                )
+                publicacoes_mensais = dados.groupby(["mes_ano", "name"]).size().reset_index(name="quantidade")
 
                 publicacoes_por_usuario = dados['name'].value_counts().reset_index()
                 publicacoes_por_usuario.columns = ['Nome', 'Quantidade']
@@ -229,7 +229,8 @@ def main() -> None:
                 st.subheader("Gráfico de Barras (Intimações)")
                 st.plotly_chart(fig_barras_plotly, use_container_width=True)
                 st.subheader("Tabela de Quantitativo Mensal (Intimações)")
-                st.dataframe(publicacoes_mensais)   
+                st.dataframe(publicacoes_mensais)
+                
     except pymysql.MySQLError as e:
         st.error(f"Erro na conexão com o banco de dados: {e}")
 
