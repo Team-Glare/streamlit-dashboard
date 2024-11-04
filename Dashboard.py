@@ -281,7 +281,7 @@ def main() -> None:
                 )
 
                 bar = (
-                    Bar()
+                     Bar(init_opts=opts.InitOpts(width="800px", height="500px"))
                     .add_xaxis(list(publicacoes_mensais["mes_ano"].unique()))
                     .add_yaxis(
                         "Quantidade de Publicações",
