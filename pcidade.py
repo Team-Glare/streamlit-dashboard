@@ -41,7 +41,7 @@ def main() -> None:
             'Ariovaldo Alves Vidal',
             'Melissa Cristina Arrepia Sampaio de Melo',
             'Douglas Sales Leite',
-            'André Sales Leite',
+            'André Salles Barboza',
         ]
         
         cursor = conn.cursor()
