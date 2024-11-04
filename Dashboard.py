@@ -293,6 +293,7 @@ def main() -> None:
                         title_opts=opts.TitleOpts(
                             title="Publicações Mensais (Intimações)",
                             subtitle="Total por mês",
+                            title_gap=10
                         ),
                         toolbox_opts=opts.ToolboxOpts(),
                     )
