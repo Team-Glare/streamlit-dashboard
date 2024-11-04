@@ -1,10 +1,8 @@
-"""Dashboard do projeto."""
-
-import os
 import datetime
+import os
 import dotenv
 import pandas as pd
-import plotly.express as px  # type: ignore  # noqa: PGH003
+import plotly.express as px
 import pymysql
 import streamlit as st
 from pyecharts.charts import Bar
@@ -14,7 +12,7 @@ from streamlit_echarts import st_pyecharts
 st.set_page_config(layout="wide")
 
 # Título da página
-st.title("ESTATÍSTICA DA PROCURADORIA DE PATRIMONIO URBANÍSTICO E IMOBILIÁRIO - PPUI - PUBLICAÇÕES - 2024  :bar_chart:")
+st.title("ESTATÍSTICA - PROCURADORIA DA CIDADE - PCIDADE - PUBLICAÇÕES (DIÁRIOS E PORTAIS) - 2024 :bar_chart:")
 
 dotenv.load_dotenv()
 
@@ -24,12 +22,7 @@ user = os.getenv("DB_USER")
 password = os.getenv("DB_PASSWORD") or ""
 database = os.getenv("DB_DATABASE")
 
-
-
-
-
 def main() -> None:
-    """Start the Streamlit app."""
     try:
         if not host or not user or not database:
             st.error("Faltam informações de conexão com o banco de dados.")
@@ -44,18 +37,18 @@ def main() -> None:
         )
         
         names = [
-            'Luís Fernando da Costa',
-            'Glaucus Cerqueira Barreto',
-            'Gabriela Abramides',
-            'Jean Almeida do Vale',
-            'João Paulo Gregório Canelas'
+            'Fabiana de Araujo Prado',
+            'Ariovaldo Alves Vidal',
+            'Melissa Cristina Arrepia Sampaio de Melo',
+            'Douglas Sales Leite',
+            'André Salles Barboza',
         ]
         
         cursor = conn.cursor()
 
         # Executar a consulta SQL
         cursor.execute(
-            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PPUI'",
+            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='PCIDADE'",
         )
         resultados = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
