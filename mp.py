@@ -13,34 +13,22 @@ st.set_page_config(layout="wide")
 # Título da página
 st.title("Estatística - Ministério Público - MP - 2024 :bar_chart:")
 
-dotenv.load_dotenv()
-
-# Informações de conexão com o banco de dados
-host = os.getenv("DB_HOST")
-user = os.getenv("DB_USER")
-password = os.getenv("DB_PASSWORD") or ""
-database = os.getenv("DB_DATABASE")
-
 
 def main() -> None:
     """Start the Streamlit app."""
     try:
-        if not host or not user or not database:
-            st.error("Faltam informações de conexão com o banco de dados.")
-            return
-
         conn = pymysql.connect(
-            host=host,
+            host='120.77.222.217',
             port=3306,
-            user=user,
-            password=password,
-            database=database,
+            user='root',
+            password='123456',
+            database='address',
         )
         cursor = conn.cursor()
 
         # Executar a consulta SQL
         cursor.execute(
-            "SELECT * FROM ANDAMENTOS WHERE nome_procuradoria='MP'",
+            "SELECT id, name, email_address FROM contact",
         )
         resultados = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
